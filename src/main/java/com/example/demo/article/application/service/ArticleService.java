@@ -1,4 +1,4 @@
-package com.example.demo.article.application;
+package com.example.demo.article.application.service;
 
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.out.LoadArticlePort;
@@ -13,6 +13,7 @@ public class ArticleService implements GetArticleUseCase {
 
     @Override
     public Article findArticle(Long articleId) {
-        return null;
+        loadArticlePort.findArticleById(articleId);
+        return new Article();
     }
 }
