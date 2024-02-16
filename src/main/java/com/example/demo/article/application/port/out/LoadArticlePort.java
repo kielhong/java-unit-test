@@ -1,10 +1,8 @@
 package com.example.demo.article.application.port.out;
 
-import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
+import com.example.demo.article.domain.Article;
+import java.util.Optional;
 
-public class LoadArticlePort {
-
-    public ArticleJpaEntity findArticleById(Long articleId) {
-        return new ArticleJpaEntity();
-    }
+public interface LoadArticlePort {
+    Optional<Article> findArticleById(Long articleId);
 }
