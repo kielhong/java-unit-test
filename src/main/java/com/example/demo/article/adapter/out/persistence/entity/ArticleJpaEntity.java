@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +21,9 @@ public class ArticleJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "board_id", nullable = false)
-    private Long boardId;
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private BoardJpaEntity board;
 
     @Column(nullable = false)
     private String subject;
@@ -34,8 +37,8 @@ public class ArticleJpaEntity {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public ArticleJpaEntity(Long boardId, String subject, String content, String username, LocalDateTime createdAt) {
-        this.boardId = boardId;
+    public ArticleJpaEntity(BoardJpaEntity board, String subject, String content, String username, LocalDateTime createdAt) {
+        this.board = board;
         this.subject = subject;
         this.content = content;
         this.username = username;

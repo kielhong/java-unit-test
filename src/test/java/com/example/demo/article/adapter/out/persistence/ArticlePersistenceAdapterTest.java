@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
+import com.example.demo.article.adapter.out.persistence.entity.BoardJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -26,19 +27,19 @@ class ArticlePersistenceAdapterTest {
     @Test
     @DisplayName("articleId로 Article 한개 조회")
     void given_articleId_when_getById_then_return_Article() {
-        Long articleId = 1L;
-        var articleJpaEntity = new ArticleJpaEntity(10L, "subject", "content", "username", LocalDateTime.now());
+        var boardJpaEntity = new BoardJpaEntity("board");
+        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "username", LocalDateTime.now());
         given(articleRepository.findById(any()))
             .willReturn(Optional.of(articleJpaEntity));
 
-        var result = adapter.findArticleById(articleId);
+        var result = adapter.findArticleById(1L);
 
         then(result)
             .isPresent()
             .hasValueSatisfying(article ->
                 then(article)
                     .hasFieldOrPropertyWithValue("id", articleJpaEntity.getId())
-                    .hasFieldOrPropertyWithValue("boardId", articleJpaEntity.getBoardId())
+                    .hasFieldOrPropertyWithValue("board.id", articleJpaEntity.getBoard().getId())
                     .hasFieldOrPropertyWithValue("subject", articleJpaEntity.getSubject())
                     .hasFieldOrPropertyWithValue("content", articleJpaEntity.getContent())
                     .hasFieldOrPropertyWithValue("createdAt", articleJpaEntity.getCreatedAt())
