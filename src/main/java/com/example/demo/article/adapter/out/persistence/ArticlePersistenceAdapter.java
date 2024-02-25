@@ -22,7 +22,7 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
     @Override
     public Optional<Article> findArticleById(Long articleId) {
         return articleRepository.findById(articleId)
-            .map(a -> new Article(a.getId(), new Board(a.getBoard().getId(), a.getBoard().getName()), a.getSubject(), a.getContent(), a.getUsername(), a.getCreatedAt()));
+            .map(article -> new Article(article.getId(), new Board(article.getBoard().getId(), article.getBoard().getName()), article.getSubject(), article.getContent(), article.getUsername(), article.getCreatedAt()));
     }
 
     @Override

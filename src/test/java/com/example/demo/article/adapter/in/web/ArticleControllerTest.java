@@ -7,10 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.ArticleFixtures;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.domain.Article;
-import com.example.demo.article.domain.Board;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +27,7 @@ class ArticleControllerTest {
     @Test
     @DisplayName("GET /articles/{articleId}")
     void getArticle() throws Exception {
-        var board = new Board(5L, "board");
-        var article = new Article(1L, board, "subject", "content", "username", LocalDateTime.now());
+        var article = ArticleFixtures.article();
         given(getArticleUseCase.getArticleById(any()))
             .willReturn(article);
 
