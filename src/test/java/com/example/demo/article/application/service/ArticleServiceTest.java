@@ -4,6 +4,8 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.example.demo.article.application.port.in.dto.ArticleRequest;
+import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
@@ -19,12 +21,15 @@ class ArticleServiceTest {
     private ArticleService sut;
 
     private LoadArticlePort loadArticlePort;
+    private CommandArticlePort commandArticlePort;
+
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
+        commandArticlePort = Mockito.mock(CommandArticlePort.class);
 
-        sut = new ArticleService(loadArticlePort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort);
     }
 
     @Test
@@ -57,7 +62,6 @@ class ArticleServiceTest {
         given(loadArticlePort.findArticlesByBoardId(any()))
             .willReturn(List.of(article1, article2));
 
-
         var result = sut.getArticlesByBoard(5L);
 
         then(result)
@@ -65,4 +69,18 @@ class ArticleServiceTest {
             .extracting("board.id").containsOnly(5L);
     }
 
+    @Test
+    @DisplayName("Article 생성")
+    void createArticle_returnCreatedArticleId() {
+        var request = new ArticleRequest(5L, "subject", "content", "user");
+        var board = new Board(5L, "board");
+        var article = new Article(1L, board, "subject", "content", "user", LocalDateTime.now());
+        given(commandArticlePort.createArticle(any()))
+            .willReturn(article);
+
+        var result = sut.postArticle(request);
+
+        then(result)
+            .isEqualTo(article);
+    }
 }
