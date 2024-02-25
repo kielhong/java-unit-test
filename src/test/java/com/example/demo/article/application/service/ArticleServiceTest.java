@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.example.demo.article.application.port.out.LoadArticlePort;
-import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
 import java.time.LocalDateTime;
@@ -37,7 +36,7 @@ class ArticleServiceTest {
             .willReturn(Optional.of(article));
 
 
-        var result = sut.getById(1L);
+        var result = sut.getArticleById(1L);
 
         then(result)
             .isNotNull()
@@ -65,4 +64,5 @@ class ArticleServiceTest {
             .hasSize(2)
             .extracting("board.id").containsOnly(5L);
     }
+
 }

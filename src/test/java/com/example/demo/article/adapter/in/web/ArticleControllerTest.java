@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.application.port.in.dto.ArticleResponse;
-import com.example.demo.article.application.port.in.dto.BoardResponse;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
 import java.time.LocalDateTime;
@@ -33,7 +31,7 @@ class ArticleControllerTest {
     void getArticle() throws Exception {
         var board = new Board(5L, "board");
         var article = new Article(1L, board, "subject", "content", "username", LocalDateTime.now());
-        given(getArticleUseCase.getById(any()))
+        given(getArticleUseCase.getArticleById(any()))
             .willReturn(article);
 
         Long articleId = 1L;

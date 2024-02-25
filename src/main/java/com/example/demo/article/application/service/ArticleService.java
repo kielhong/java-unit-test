@@ -15,7 +15,7 @@ public class ArticleService implements GetArticleUseCase {
     }
 
     @Override
-    public Article getById(Long articleId) {
+    public Article getArticleById(Long articleId) {
         return loadArticlePort.findArticleById(articleId)
             .orElseThrow();
     }
