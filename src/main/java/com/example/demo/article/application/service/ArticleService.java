@@ -7,6 +7,7 @@ import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
+import com.example.demo.common.exception.AccessDeniedException;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,12 @@ public class ArticleService implements GetArticleUseCase, PostArticleUseCase, Mo
 
     @Override
     public Article modifyArticle(ArticleRequest request) {
+        Article article = loadArticlePort.findArticleById(request.id())
+            .orElseThrow();
+
+        if (!article.getUsername().equals(request.username())) {
+            throw new AccessDeniedException("");
+        }
         return commandArticlePort.modifyArticle(request);
     }
 }

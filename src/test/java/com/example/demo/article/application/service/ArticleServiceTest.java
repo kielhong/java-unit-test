@@ -1,6 +1,7 @@
 package com.example.demo.article.application.service;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -10,11 +11,14 @@ import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
+import com.example.demo.common.exception.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -33,7 +37,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("articleId로 Article 한개 조회")
+    @DisplayName("Article 한 개 조회")
     void given_articleId_when_getById_then_return_Article() {
         var article = ArticleFixtures.article();
         given(loadArticlePort.findArticleById(any()))
@@ -52,7 +56,7 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("boardId로 같은 Board의 Article 목록 조회")
+    @DisplayName("Board의 Article 목록 조회")
     void getArticlesByBoard_listArticles() {
         var article1 = ArticleFixtures.article(1L);
         var article2 = ArticleFixtures.article(2L);
@@ -67,9 +71,9 @@ class ArticleServiceTest {
     }
 
     @Test
-    @DisplayName("Article 생성")
+    @DisplayName("Article 생성하면 생성된 Article 반환")
     void createArticle_returnCreatedArticleId() {
-        var request = new ArticleRequest(5L, "subject", "content", "user");
+        var request = new ArticleRequest(null, 5L, "subject", "content", "user");
         var article = ArticleFixtures.article();
         given(commandArticlePort.createArticle(any()))
             .willReturn(article);
@@ -80,18 +84,54 @@ class ArticleServiceTest {
             .isEqualTo(article);
     }
 
-    @Test
+    @Nested
     @DisplayName("Article 변경")
-    void modifyArticle_returnModifiedArticleId() {
-        var request = new ArticleRequest(6L, "new subject", "new content", "user");
-        var board = new Board(6L, "board6");
-        var modifiedArticle = new Article(1L, board, "new subject", "new content", "user", LocalDateTime.now());
-        given(commandArticlePort.modifyArticle(any()))
-            .willReturn(modifiedArticle);
+    class ModifyArticle {
+        private ArticleRequest request;
 
-        var result = sut.modifyArticle(request);
+        @BeforeEach
+        void setUp() {
+            request = new ArticleRequest(6L, 6L, "new subject", "new content", "otheruser");
+        }
 
-        then(result)
-            .isEqualTo(modifiedArticle);
+        @Test
+        @DisplayName("변경된 Article 반환")
+        void returnModifiedArticleId() {
+            var article = ArticleFixtures.article();
+            var board = new Board(6L, "other board");
+            request = new ArticleRequest(6L, 6L, "new subject", "new content", article.getUsername());
+
+            given(loadArticlePort.findArticleById(any()))
+                .willReturn(Optional.of(article));
+            var modifiedArticle = new Article(1L, board, "new subject", "new content", article.getUsername(), LocalDateTime.now());
+            given(commandArticlePort.modifyArticle(any()))
+                .willReturn(modifiedArticle);
+
+            var result = sut.modifyArticle(request);
+
+            then(result)
+                .isEqualTo(modifiedArticle);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 Article 이면 NoSuchElementException throw")
+        void notExistArticle_throwNoSuchElementException() {
+            given(loadArticlePort.findArticleById(any()))
+                .willReturn(Optional.empty());
+
+            thenThrownBy(() -> sut.modifyArticle(request))
+                .isInstanceOf(NoSuchElementException.class);
+        }
+
+        @Test
+        @DisplayName("user 가 다르면 AccessDeniedException throw")
+        void otherUser_throwException() {
+            var article = ArticleFixtures.article();
+            given(loadArticlePort.findArticleById(any()))
+                .willReturn(Optional.of(article));
+
+            thenThrownBy(() -> sut.modifyArticle(request))
+                .isInstanceOf(AccessDeniedException.class);
+        }
     }
 }
