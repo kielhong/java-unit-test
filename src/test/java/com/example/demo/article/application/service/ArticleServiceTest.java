@@ -8,6 +8,9 @@ import com.example.demo.article.ArticleFixtures;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
+import com.example.demo.article.domain.Article;
+import com.example.demo.article.domain.Board;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +23,6 @@ class ArticleServiceTest {
 
     private LoadArticlePort loadArticlePort;
     private CommandArticlePort commandArticlePort;
-
 
     @BeforeEach
     void setUp() {
@@ -76,5 +78,20 @@ class ArticleServiceTest {
 
         then(result)
             .isEqualTo(article);
+    }
+
+    @Test
+    @DisplayName("Article 변경")
+    void modifyArticle_returnModifiedArticleId() {
+        var request = new ArticleRequest(6L, "new subject", "new content", "user");
+        var board = new Board(6L, "board6");
+        var modifiedArticle = new Article(1L, board, "new subject", "new content", "user", LocalDateTime.now());
+        given(commandArticlePort.modifyArticle(any()))
+            .willReturn(modifiedArticle);
+
+        var result = sut.modifyArticle(request);
+
+        then(result)
+            .isEqualTo(modifiedArticle);
     }
 }

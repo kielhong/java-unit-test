@@ -34,4 +34,9 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
     public Article createArticle(ArticleRequest request) {
         return null;
     }
+
+    @Override
+    public Article modifyArticle(ArticleRequest request) {
+        return null;
+    }
 }
