@@ -1,7 +1,7 @@
 package com.example.demo.article.application.port.in;
 
-import com.example.demo.article.domain.Article;
+import com.example.demo.article.application.port.in.dto.ArticleResponse;
 
 public interface GetArticleUseCase {
-    Article findArticle(Long articleId);
+    ArticleResponse getById(Long articleId);
 }
