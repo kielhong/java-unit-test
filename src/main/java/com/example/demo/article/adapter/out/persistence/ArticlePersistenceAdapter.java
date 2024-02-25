@@ -1,6 +1,8 @@
 package com.example.demo.article.adapter.out.persistence;
 
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
+import com.example.demo.article.application.port.in.dto.ArticleRequest;
+import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
@@ -10,7 +12,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArticlePersistenceAdapter implements LoadArticlePort {
+public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticlePort {
     private final ArticleRepository articleRepository;
 
     public ArticlePersistenceAdapter(ArticleRepository articleRepository) {
@@ -20,11 +22,16 @@ public class ArticlePersistenceAdapter implements LoadArticlePort {
     @Override
     public Optional<Article> findArticleById(Long articleId) {
         return articleRepository.findById(articleId)
-            .map(a -> new Article(a.getId(), new Board(a.getBoard().getId(), a.getBoard().getName()), a.getSubject(), a.getContent(), a.getUsername(), a.getCreatedAt()));
+            .map(article -> new Article(article.getId(), new Board(article.getBoard().getId(), article.getBoard().getName()), article.getSubject(), article.getContent(), article.getUsername(), article.getCreatedAt()));
     }
 
     @Override
     public List<Article> findArticlesByBoardId(Long boardId) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public Article createArticle(ArticleRequest request) {
+        return null;
     }
 }
