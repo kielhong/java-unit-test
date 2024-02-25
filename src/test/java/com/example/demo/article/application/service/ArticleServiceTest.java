@@ -14,25 +14,24 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class ArticleServiceTest {
+    private ArticleService sut;
 
-    private ArticleService service;
-
-    private final LoadArticlePort loadArticlePort = Mockito.mock(LoadArticlePort.class);
+    private LoadArticlePort loadArticlePort;
 
     @BeforeEach
     void setUp() {
-        service = new ArticleService(loadArticlePort);
+        loadArticlePort = Mockito.mock(LoadArticlePort.class);
+        sut = new ArticleService(loadArticlePort);
     }
 
     @Test
     @DisplayName("articleId로 Article 한개 조회")
     void given_articleId_when_getById_then_return_Article() {
-        Long articleId = 1L;
-        var article = new Article(articleId, 10L, "", "", "", LocalDateTime.now());
+        var article = new Article(1L, 10L, "", "", "", LocalDateTime.now());
         given(loadArticlePort.findArticleById(any()))
             .willReturn(Optional.of(article));
 
-        var result = service.getById(articleId);
+        var result = sut.getById(1L);
 
         then(result)
             .isNotNull()
