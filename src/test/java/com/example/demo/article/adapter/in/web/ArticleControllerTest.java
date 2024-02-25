@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleResponse;
+import com.example.demo.article.application.port.in.dto.BoardResponse;
+import com.example.demo.article.domain.Article;
+import com.example.demo.article.domain.Board;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,21 +31,22 @@ class ArticleControllerTest {
     @Test
     @DisplayName("GET /articles/{articleId}")
     void getArticle() throws Exception {
-        var response = new ArticleResponse(1L, 10L, "subject", "content", "username", LocalDateTime.now());
+        var board = new Board(5L, "board");
+        var article = new Article(1L, board, "subject", "content", "username", LocalDateTime.now());
         given(getArticleUseCase.getById(any()))
-            .willReturn(response);
+            .willReturn(article);
 
         Long articleId = 1L;
         mockMvc.perform(get("/articles/{articleId}", articleId))
             .andDo(print())
             .andExpectAll(
                 status().isOk(),
-                jsonPath("$.id").value(response.id()),
-                jsonPath("$.boardId").value(response.boardId()),
-                jsonPath("$.subject").value(response.subject()),
-                jsonPath("$.content").value(response.content()),
-                jsonPath("$.username").value(response.username()),
-                jsonPath("$.createdAt").value(response.createdAt().toString())
+                jsonPath("$.id").value(article.getId()),
+                jsonPath("$.board.id").value(article.getBoard().getId()),
+                jsonPath("$.subject").value(article.getSubject()),
+                jsonPath("$.content").value(article.getContent()),
+                jsonPath("$.username").value(article.getUsername()),
+                jsonPath("$.createdAt").value(article.getCreatedAt().toString())
             );
     }
 }

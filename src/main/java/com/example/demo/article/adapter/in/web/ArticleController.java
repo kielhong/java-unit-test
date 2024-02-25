@@ -16,6 +16,8 @@ public class ArticleController {
 
     @RequestMapping("/articles/{articleId}")
     ArticleResponse getArticle(@PathVariable Long articleId) {
-        return getArticleUseCase.getById(articleId);
+        var article = getArticleUseCase.getById(articleId);
+
+        return ArticleResponse.from(article);
     }
 }
