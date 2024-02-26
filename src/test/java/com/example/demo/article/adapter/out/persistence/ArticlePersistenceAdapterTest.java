@@ -4,10 +4,10 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
-import com.example.demo.article.adapter.out.persistence.entity.BoardJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
-import java.time.LocalDateTime;
+import com.example.demo.article.domain.Article;
+import com.example.demo.article.out.persistence.ArticleJpaEntityFixtures;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,18 +17,18 @@ import org.mockito.Mockito;
 class ArticlePersistenceAdapterTest {
     private ArticlePersistenceAdapter adapter;
 
-    private final ArticleRepository articleRepository = Mockito.mock(ArticleRepository.class);
+    private ArticleRepository articleRepository;
 
     @BeforeEach
     void setUp() {
+        articleRepository = Mockito.mock(ArticleRepository.class);
         adapter = new ArticlePersistenceAdapter(articleRepository);
     }
 
     @Test
     @DisplayName("articleId로 Article 한개 조회")
     void given_articleId_when_getById_then_return_Article() {
-        var boardJpaEntity = new BoardJpaEntity("board");
-        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "username", LocalDateTime.now());
+        var articleJpaEntity = ArticleJpaEntityFixtures.entity();
         given(articleRepository.findById(any()))
             .willReturn(Optional.of(articleJpaEntity));
 
@@ -44,5 +44,20 @@ class ArticlePersistenceAdapterTest {
                     .hasFieldOrPropertyWithValue("content", articleJpaEntity.getContent())
                     .hasFieldOrPropertyWithValue("createdAt", articleJpaEntity.getCreatedAt())
             );
+    }
+
+    @Test
+    @DisplayName("boardId 에 속한 Article list 반환")
+    void findArticlesByBoard_listArticle() {
+        var articleJpaEntity1 = ArticleJpaEntityFixtures.entity(1L);
+        var articleJpaEntity2 = ArticleJpaEntityFixtures.entity(2L);
+        given(articleRepository.findByBoardId(any()))
+            .willReturn(List.of(articleJpaEntity1, articleJpaEntity2));
+
+        var result = adapter.findArticlesByBoardId(5L);
+
+        then(result)
+            .hasSize(2)
+            .hasOnlyElementsOfType(Article.class);
     }
 }

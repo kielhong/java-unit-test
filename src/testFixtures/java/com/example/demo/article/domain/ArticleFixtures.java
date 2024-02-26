@@ -1,7 +1,5 @@
-package com.example.demo.article;
+package com.example.demo.article.domain;
 
-import com.example.demo.article.domain.Article;
-import com.example.demo.article.domain.Board;
 import java.time.LocalDateTime;
 
 public class ArticleFixtures {

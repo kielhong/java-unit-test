@@ -9,6 +9,7 @@ import com.example.demo.article.domain.Board;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,7 +28,9 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
 
     @Override
     public List<Article> findArticlesByBoardId(Long boardId) {
-        return Collections.emptyList();
+        return articleRepository.findByBoardId(boardId).stream()
+            .map(article -> new Article(article.getId(), new Board(article.getBoard().getId(), article.getBoard().getName()), article.getSubject(), article.getContent(), article.getUsername(), article.getCreatedAt()))
+            .toList();
     }
 
     @Override
