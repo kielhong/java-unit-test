@@ -7,4 +7,6 @@ public interface CommandArticlePort {
     Article createArticle(ArticleRequest request);
 
     Article modifyArticle(ArticleRequest request);
+
+    void deleteArticle(Long articleId);
 }

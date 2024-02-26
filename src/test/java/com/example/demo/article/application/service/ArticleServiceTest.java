@@ -4,6 +4,8 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.verify;
 
 import com.example.demo.article.ArticleFixtures;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
@@ -36,23 +38,37 @@ class ArticleServiceTest {
         sut = new ArticleService(loadArticlePort, commandArticlePort);
     }
 
-    @Test
+    @Nested
     @DisplayName("Article 한 개 조회")
-    void given_articleId_when_getById_then_return_Article() {
-        var article = ArticleFixtures.article();
-        given(loadArticlePort.findArticleById(any()))
-            .willReturn(Optional.of(article));
+    class GetArticle {
+        @Test
+        @DisplayName("articleId 로 조회시 Article 반환")
+        void return_Article() {
+            var article = ArticleFixtures.article();
+            given(loadArticlePort.findArticleById(any()))
+                .willReturn(Optional.of(article));
 
-        var result = sut.getArticleById(1L);
+            var result = sut.getArticleById(1L);
 
-        then(result)
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("id", article.getId())
-            .hasFieldOrPropertyWithValue("board.id", article.getBoard().getId())
-            .hasFieldOrPropertyWithValue("subject", article.getSubject())
-            .hasFieldOrPropertyWithValue("content", article.getContent())
-            .hasFieldOrPropertyWithValue("username", article.getUsername())
-            .hasFieldOrPropertyWithValue("createdAt", article.getCreatedAt());
+            then(result)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("id", article.getId())
+                .hasFieldOrPropertyWithValue("board.id", article.getBoard().getId())
+                .hasFieldOrPropertyWithValue("subject", article.getSubject())
+                .hasFieldOrPropertyWithValue("content", article.getContent())
+                .hasFieldOrPropertyWithValue("username", article.getUsername())
+                .hasFieldOrPropertyWithValue("createdAt", article.getCreatedAt());
+        }
+
+        @Test
+        @DisplayName("존재하지 않을 경우 NoSuchElementException throw")
+        void throw_NoSuchElementException() {
+            given(loadArticlePort.findArticleById(any()))
+                .willReturn(Optional.empty());
+
+            thenThrownBy(() -> sut.getArticleById(1L))
+                .isInstanceOf(NoSuchElementException.class);
+        }
     }
 
     @Test
@@ -133,5 +149,16 @@ class ArticleServiceTest {
             thenThrownBy(() -> sut.modifyArticle(request))
                 .isInstanceOf(AccessDeniedException.class);
         }
+    }
+
+    @Test
+    @DisplayName("Article 삭제")
+    void deleteArticle() {
+        willDoNothing()
+            .given(commandArticlePort).deleteArticle(any());
+
+        sut.deleteArticle(1L);
+
+        verify(commandArticlePort).deleteArticle(1L);
     }
 }
