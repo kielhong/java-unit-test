@@ -7,12 +7,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
+import com.example.demo.article.application.port.in.dto.BoardRequest;
+import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
+import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,13 +32,15 @@ class ArticleServiceTest {
 
     private LoadArticlePort loadArticlePort;
     private CommandArticlePort commandArticlePort;
+    private LoadBoardPort loadBoardPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
         commandArticlePort = Mockito.mock(CommandArticlePort.class);
+        loadBoardPort = Mockito.mock(LoadBoardPort.class);
 
-        sut = new ArticleService(loadArticlePort, commandArticlePort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @Nested
@@ -86,19 +91,37 @@ class ArticleServiceTest {
             .extracting("board.id").containsOnly(5L);
     }
 
-    @Test
-    @DisplayName("Article 생성하면 생성된 Article 반환")
-    void createArticle_returnCreatedArticleId() {
-        var request = new ArticleRequest(null, 5L, "subject", "content", "user");
-        var article = ArticleFixtures.article();
-        given(commandArticlePort.createArticle(any()))
-            .willReturn(article);
+    @Nested
+    @DisplayName("Article 생성")
+    class PostArticle {
+        private final ArticleRequest request = new ArticleRequest(null, new BoardRequest(5L, "board"), "subject", "content", "user");
+        @Test
+        @DisplayName("생성된 Article 반환")
+        void returnCreatedArticleId() {
+            var board = BoardFixtures.board();
+            given(loadBoardPort.findBoardById(any()))
+                .willReturn(Optional.of(board));
+            var article = ArticleFixtures.article();
+            given(commandArticlePort.createArticle(any()))
+                .willReturn(article);
 
-        var result = sut.postArticle(request);
+            var result = sut.postArticle(request);
 
-        then(result)
-            .isEqualTo(article);
+            then(result)
+                .isEqualTo(article);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 boardId 이면 throw NoSuchElementException")
+        void notExistBoard_throwNoSuchElementException() {
+            given(loadBoardPort.findBoardById(any()))
+                .willReturn(Optional.empty());
+
+            thenThrownBy(() -> sut.postArticle(request))
+                .isInstanceOf(NoSuchElementException.class);
+        }
     }
+
 
     @Nested
     @DisplayName("Article 변경")
@@ -107,7 +130,7 @@ class ArticleServiceTest {
 
         @BeforeEach
         void setUp() {
-            request = new ArticleRequest(6L, 6L, "new subject", "new content", "otheruser");
+            request = new ArticleRequest(6L, new BoardRequest(6L, "board"), "new subject", "new content", "otheruser");
         }
 
         @Test
@@ -115,7 +138,7 @@ class ArticleServiceTest {
         void returnModifiedArticleId() {
             var article = ArticleFixtures.article();
             var board = new Board(6L, "other board");
-            request = new ArticleRequest(6L, 6L, "new subject", "new content", article.getUsername());
+            request = new ArticleRequest(6L, new BoardRequest(6L, "new board"), "new subject", "new content", article.getUsername());
 
             given(loadArticlePort.findArticleById(any()))
                 .willReturn(Optional.of(article));

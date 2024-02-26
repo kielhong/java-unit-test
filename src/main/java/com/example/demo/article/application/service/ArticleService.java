@@ -7,6 +7,7 @@ import com.example.demo.article.application.port.in.PostArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
+import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.common.exception.AccessDeniedException;
 import java.util.List;
@@ -16,10 +17,12 @@ import org.springframework.stereotype.Service;
 public class ArticleService implements GetArticleUseCase, PostArticleUseCase, ModifyArticleUseCase, DeleteArticleUseCase {
     private final LoadArticlePort loadArticlePort;
     private final CommandArticlePort commandArticlePort;
+    private final LoadBoardPort loadBoardPort;
 
-    public ArticleService(LoadArticlePort loadArticlePort, CommandArticlePort commandArticlePort) {
+    public ArticleService(LoadArticlePort loadArticlePort, CommandArticlePort commandArticlePort, LoadBoardPort loadBoardPort) {
         this.loadArticlePort = loadArticlePort;
         this.commandArticlePort = commandArticlePort;
+        this.loadBoardPort = loadBoardPort;
     }
 
     @Override
@@ -35,6 +38,8 @@ public class ArticleService implements GetArticleUseCase, PostArticleUseCase, Mo
 
     @Override
     public Article postArticle(ArticleRequest request) {
+        loadBoardPort.findBoardById(request.boardRequest().id())
+            .orElseThrow();
         return commandArticlePort.createArticle(request.toDomain());
     }
 
