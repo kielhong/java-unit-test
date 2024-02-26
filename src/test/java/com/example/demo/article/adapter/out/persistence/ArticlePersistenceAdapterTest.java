@@ -3,6 +3,7 @@ package com.example.demo.article.adapter.out.persistence;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
@@ -84,7 +85,7 @@ class ArticlePersistenceAdapterTest {
             var boardJpaEntity = BoardJpaEntityFixtures.board();
             given(boardRepository.findById(any()))
                 .willReturn(Optional.of(boardJpaEntity));
-            var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "username",
+            var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
                 LocalDateTime.parse("2023-02-10T11:12:33"));
             ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
             given(articleRepository.save(any()))
@@ -97,7 +98,7 @@ class ArticlePersistenceAdapterTest {
                 .hasFieldOrPropertyWithValue("board.id", 5L)
                 .hasFieldOrPropertyWithValue("subject", "subject")
                 .hasFieldOrPropertyWithValue("content", "content")
-                .hasFieldOrPropertyWithValue("username", "username");
+                .hasFieldOrPropertyWithValue("username", "user");
         }
 
         @Test
@@ -123,5 +124,15 @@ class ArticlePersistenceAdapterTest {
                 .hasFieldOrPropertyWithValue("content", "content")
                 .hasFieldOrPropertyWithValue("username", "user");
         }
+    }
+
+    @Test
+    @DisplayName("Article 삭제")
+    void deleteArticle() {
+        willDoNothing().given(articleRepository).deleteById(any());
+
+        adapter.deleteArticle(1L);
+
+        verify(articleRepository).deleteById(1L);
     }
 }

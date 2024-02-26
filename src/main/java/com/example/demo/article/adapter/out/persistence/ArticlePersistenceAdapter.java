@@ -38,11 +38,9 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
 
     @Override
     public Article createArticle(Article article) {
-        var boardJpaEntity = boardRepository.findById(article.getBoard().getId()).get();
-        var articleJpaEntity = articleRepository.save(
-            new ArticleJpaEntity(boardJpaEntity, article.getSubject(), article.getContent(), article.getUsername(), LocalDateTime.now()));
+        var articleJpaEntity = articleRepository.save(ArticleJpaEntity.fromDomain(article));
 
-        return new Article(articleJpaEntity.getId(), new Board(articleJpaEntity.getBoard().getId(), articleJpaEntity.getBoard().getName()), articleJpaEntity.getSubject(), articleJpaEntity.getContent(), articleJpaEntity.getUsername(), articleJpaEntity.getCreatedAt());
+        return articleJpaEntity.toDomain();
     }
 
     @Override
@@ -52,6 +50,6 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
 
     @Override
     public void deleteArticle(Long articleId) {
-
+        articleRepository.deleteById(articleId);
     }
 }
