@@ -1,5 +1,6 @@
 package com.example.demo.article.application.service;
 
+import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.application.port.in.PostArticleUseCase;
@@ -12,7 +13,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArticleService implements GetArticleUseCase, PostArticleUseCase, ModifyArticleUseCase {
+public class ArticleService implements GetArticleUseCase, PostArticleUseCase, ModifyArticleUseCase, DeleteArticleUseCase {
     private final LoadArticlePort loadArticlePort;
     private final CommandArticlePort commandArticlePort;
 
@@ -46,5 +47,10 @@ public class ArticleService implements GetArticleUseCase, PostArticleUseCase, Mo
             throw new AccessDeniedException("");
         }
         return commandArticlePort.modifyArticle(request);
+    }
+
+    @Override
+    public void deleteArticle(Long articleId) {
+        commandArticlePort.deleteArticle(articleId);
     }
 }

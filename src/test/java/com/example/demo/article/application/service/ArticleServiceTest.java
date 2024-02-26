@@ -4,6 +4,8 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.verify;
 
 import com.example.demo.article.ArticleFixtures;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
@@ -147,5 +149,16 @@ class ArticleServiceTest {
             thenThrownBy(() -> sut.modifyArticle(request))
                 .isInstanceOf(AccessDeniedException.class);
         }
+    }
+
+    @Test
+    @DisplayName("Article 삭제")
+    void deleteArticle() {
+        willDoNothing()
+            .given(commandArticlePort).deleteArticle(any());
+
+        sut.deleteArticle(1L);
+
+        verify(commandArticlePort).deleteArticle(1L);
     }
 }
