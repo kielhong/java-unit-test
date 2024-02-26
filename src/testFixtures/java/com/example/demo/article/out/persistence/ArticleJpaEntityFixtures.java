@@ -5,8 +5,6 @@ import com.example.demo.article.adapter.out.persistence.entity.BoardJpaEntity;
 import java.time.LocalDateTime;
 
 public class ArticleJpaEntityFixtures {
-    private ArticleJpaEntityFixtures() {}
-
     public static ArticleJpaEntity entity(Long index) {
         var boardJpaEntity = new BoardJpaEntity("board");
 

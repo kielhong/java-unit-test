@@ -35,7 +35,7 @@ public class ArticleService implements GetArticleUseCase, PostArticleUseCase, Mo
 
     @Override
     public Article postArticle(ArticleRequest request) {
-        return commandArticlePort.createArticle(request);
+        return commandArticlePort.createArticle(request.toDomain());
     }
 
     @Override

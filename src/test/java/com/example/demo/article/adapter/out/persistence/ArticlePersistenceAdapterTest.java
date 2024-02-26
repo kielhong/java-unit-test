@@ -3,26 +3,37 @@ package com.example.demo.article.adapter.out.persistence;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
+import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
+import com.example.demo.article.adapter.out.persistence.repository.BoardRepository;
 import com.example.demo.article.domain.Article;
+import com.example.demo.article.domain.Board;
 import com.example.demo.article.out.persistence.ArticleJpaEntityFixtures;
+import com.example.demo.article.out.persistence.BoardJpaEntityFixtures;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class ArticlePersistenceAdapterTest {
     private ArticlePersistenceAdapter adapter;
 
     private ArticleRepository articleRepository;
+    private BoardRepository boardRepository;
 
     @BeforeEach
     void setUp() {
         articleRepository = Mockito.mock(ArticleRepository.class);
-        adapter = new ArticlePersistenceAdapter(articleRepository);
+        boardRepository = Mockito.mock(BoardRepository.class);
+
+        adapter = new ArticlePersistenceAdapter(articleRepository, boardRepository);
     }
 
     @Test
@@ -59,5 +70,53 @@ class ArticlePersistenceAdapterTest {
         then(result)
             .hasSize(2)
             .hasOnlyElementsOfType(Article.class);
+    }
+
+    @Test
+    @DisplayName("Article 생성 - 응답값 verify")
+    void createArticle_returnCreatedArticle() {
+        var boardJpaEntity = BoardJpaEntityFixtures.board();
+        given(boardRepository.findById(any()))
+            .willReturn(Optional.of(boardJpaEntity));
+        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "username",
+            LocalDateTime.parse("2023-02-10T11:12:33"));
+        ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
+        given(articleRepository.save(any()))
+            .willReturn(articleJpaEntity);
+
+        var article = new Article(null, new Board(5L, "board"), "subject", "content", "uer", LocalDateTime.now());
+        var result = adapter.createArticle(article);
+
+        then(result)
+            .hasFieldOrPropertyWithValue("id", 1L)
+            .hasFieldOrPropertyWithValue("board.id", 5L)
+            .hasFieldOrPropertyWithValue("subject", "subject")
+            .hasFieldOrPropertyWithValue("content", "content")
+            .hasFieldOrPropertyWithValue("username", "username");
+    }
+
+    @Test
+    @DisplayName("Article 생성 - verify capture")
+    void createArticle_verifySaveArg() {
+        ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
+        var boardJpaEntity = BoardJpaEntityFixtures.board();
+        given(boardRepository.findById(any()))
+            .willReturn(Optional.of(boardJpaEntity));
+        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
+            LocalDateTime.parse("2023-02-10T11:12:33"));
+        ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
+        given(articleRepository.save(any()))
+            .willReturn(articleJpaEntity);
+
+        var article = new Article(null, new Board(5L, "board"), "subject", "content", "user", LocalDateTime.now());
+        adapter.createArticle(article);
+
+        verify(articleRepository).save(argumentCaptor.capture());
+        then(argumentCaptor.getValue())
+            .hasFieldOrPropertyWithValue("id", null)
+            .hasFieldOrPropertyWithValue("board.id", 5L)
+            .hasFieldOrPropertyWithValue("subject", "subject")
+            .hasFieldOrPropertyWithValue("content", "content")
+            .hasFieldOrPropertyWithValue("username", "user");
     }
 }

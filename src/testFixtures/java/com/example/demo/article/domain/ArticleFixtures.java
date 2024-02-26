@@ -3,8 +3,6 @@ package com.example.demo.article.domain;
 import java.time.LocalDateTime;
 
 public class ArticleFixtures {
-    private ArticleFixtures() {}
-
     public static Article article(Long id) {
         var board = new Board(5L, "board");
 

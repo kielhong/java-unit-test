@@ -1,23 +1,26 @@
 package com.example.demo.article.adapter.out.persistence;
 
+import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
+import com.example.demo.article.adapter.out.persistence.repository.BoardRepository;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticlePort {
     private final ArticleRepository articleRepository;
+    private final BoardRepository boardRepository;
 
-    public ArticlePersistenceAdapter(ArticleRepository articleRepository) {
+    public ArticlePersistenceAdapter(ArticleRepository articleRepository, BoardRepository boardRepository) {
         this.articleRepository = articleRepository;
+        this.boardRepository = boardRepository;
     }
 
     @Override
@@ -34,8 +37,12 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
     }
 
     @Override
-    public Article createArticle(ArticleRequest request) {
-        return null;
+    public Article createArticle(Article article) {
+        var boardJpaEntity = boardRepository.findById(article.getBoard().getId()).get();
+        var articleJpaEntity = articleRepository.save(
+            new ArticleJpaEntity(boardJpaEntity, article.getSubject(), article.getContent(), article.getUsername(), LocalDateTime.now()));
+
+        return new Article(articleJpaEntity.getId(), new Board(articleJpaEntity.getBoard().getId(), articleJpaEntity.getBoard().getName()), articleJpaEntity.getSubject(), articleJpaEntity.getContent(), articleJpaEntity.getUsername(), articleJpaEntity.getCreatedAt());
     }
 
     @Override
