@@ -29,10 +29,18 @@ dependencies {
 	testFixturesApi 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
 
-tasks.named("test") {
+test {
 	useJUnitPlatform()
 }
 
-tasks.jacocoTestReport {
+jacocoTestReport {
 	dependsOn(tasks.test)
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/UnitTestApplication.*"
+            ])
+        }))
+    }
 }
