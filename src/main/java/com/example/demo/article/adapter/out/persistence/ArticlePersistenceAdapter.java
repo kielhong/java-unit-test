@@ -44,8 +44,10 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
     }
 
     @Override
-    public Article modifyArticle(ArticleRequest request) {
-        return null;
+    public Article modifyArticle(Article article) {
+        var articleJpaEntity = articleRepository.save(ArticleJpaEntity.fromDomain(article));
+
+        return articleJpaEntity.toDomain();
     }
 
     @Override

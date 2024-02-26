@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
+import com.example.demo.article.adapter.out.persistence.entity.BoardJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
 import com.example.demo.article.adapter.out.persistence.repository.BoardRepository;
 import com.example.demo.article.domain.Article;
@@ -127,9 +128,37 @@ class ArticlePersistenceAdapterTest {
     }
 
     @Test
+    @DisplayName("Article 변경")
+    void modifyArticle() {
+        ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
+
+        final Article article = new Article(1L, new Board(6L, "new board"), "new subject", "new content", "new user", LocalDateTime.now());
+        var boardJpaEntity = new BoardJpaEntity("new board");
+        ReflectionTestUtils.setField(boardJpaEntity, "id", 6L);
+        given(boardRepository.findById(any()))
+            .willReturn(Optional.of(boardJpaEntity));
+        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "new subject", "new content", "new user",
+            LocalDateTime.parse("2023-02-10T11:12:33"));
+        ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
+        given(articleRepository.save(any()))
+            .willReturn(articleJpaEntity);
+
+        adapter.modifyArticle(article);
+
+        verify(articleRepository).save(argumentCaptor.capture());
+        then(argumentCaptor.getValue())
+            .hasFieldOrPropertyWithValue("id", 1L)
+            .hasFieldOrPropertyWithValue("board.id", 6L)
+            .hasFieldOrPropertyWithValue("subject", "new subject")
+            .hasFieldOrPropertyWithValue("content", "new content")
+            .hasFieldOrPropertyWithValue("username", "new user");
+    }
+
+    @Test
     @DisplayName("Article 삭제")
     void deleteArticle() {
-        willDoNothing().given(articleRepository).deleteById(any());
+        willDoNothing()
+            .given(articleRepository).deleteById(any());
 
         adapter.deleteArticle(1L);
 
