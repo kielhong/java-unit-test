@@ -51,7 +51,9 @@ public class ArticleService implements GetArticleUseCase, PostArticleUseCase, Mo
         if (!article.getUsername().equals(request.username())) {
             throw new AccessDeniedException("");
         }
-        return commandArticlePort.modifyArticle(request);
+
+        article.update(request);
+        return commandArticlePort.modifyArticle(article);
     }
 
     @Override

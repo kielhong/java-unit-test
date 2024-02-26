@@ -7,17 +7,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
-import com.example.demo.article.application.port.in.dto.BoardRequest;
-import com.example.demo.article.application.port.out.LoadBoardPort;
-import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
+import com.example.demo.article.application.port.in.dto.BoardRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
+import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.Article;
+import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.domain.Board;
 import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -130,7 +129,7 @@ class ArticleServiceTest {
 
         @BeforeEach
         void setUp() {
-            request = new ArticleRequest(6L, new BoardRequest(6L, "board"), "new subject", "new content", "otheruser");
+            request = new ArticleRequest(6L, new BoardRequest(6L, "board"), "new subject", "new content", "user");
         }
 
         @Test
@@ -138,11 +137,10 @@ class ArticleServiceTest {
         void returnModifiedArticleId() {
             var article = ArticleFixtures.article();
             var board = new Board(6L, "other board");
-            request = new ArticleRequest(6L, new BoardRequest(6L, "new board"), "new subject", "new content", article.getUsername());
 
             given(loadArticlePort.findArticleById(any()))
                 .willReturn(Optional.of(article));
-            var modifiedArticle = new Article(1L, board, "new subject", "new content", article.getUsername(), LocalDateTime.now());
+            var modifiedArticle = new Article(article.getId(), board, "new subject", "new content", article.getUsername(), article.getCreatedAt());
             given(commandArticlePort.modifyArticle(any()))
                 .willReturn(modifiedArticle);
 
@@ -165,6 +163,8 @@ class ArticleServiceTest {
         @Test
         @DisplayName("user 가 다르면 AccessDeniedException throw")
         void otherUser_throwException() {
+            var request = new ArticleRequest(6L, new BoardRequest(6L, "board"), "new subject", "new content", "other user");
+
             var article = ArticleFixtures.article();
             given(loadArticlePort.findArticleById(any()))
                 .willReturn(Optional.of(article));

@@ -46,6 +46,15 @@ public class ArticleJpaEntity {
         this.createdAt = createdAt;
     }
 
+    private ArticleJpaEntity(Long id, BoardJpaEntity board, String subject, String content, String username, LocalDateTime createdAt) {
+        this.id = id;
+        this.board = board;
+        this.subject = subject;
+        this.content = content;
+        this.username = username;
+        this.createdAt = createdAt;
+    }
+
     public Article toDomain() {
         return new Article(
             this.id,
@@ -59,6 +68,7 @@ public class ArticleJpaEntity {
 
     public static ArticleJpaEntity fromDomain(Article article) {
         return new ArticleJpaEntity(
+            article.getId(),
             BoardJpaEntity.fromDomain(article.getBoard()),
             article.getSubject(),
             article.getContent(),
