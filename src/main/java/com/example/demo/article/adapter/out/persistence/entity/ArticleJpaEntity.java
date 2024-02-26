@@ -1,5 +1,6 @@
 package com.example.demo.article.adapter.out.persistence.entity;
 
+import com.example.demo.article.domain.Article;
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,5 +44,26 @@ public class ArticleJpaEntity {
         this.content = content;
         this.username = username;
         this.createdAt = createdAt;
+    }
+
+    public Article toDomain() {
+        return new Article(
+            this.id,
+            this.board.toDomain(),
+            this.subject,
+            this.content,
+            this.username,
+            this.createdAt
+        );
+    }
+
+    public static ArticleJpaEntity fromDomain(Article article) {
+        return new ArticleJpaEntity(
+            BoardJpaEntity.fromDomain(article.getBoard()),
+            article.getSubject(),
+            article.getContent(),
+            article.getUsername(),
+            article.getCreatedAt()
+        );
     }
 }

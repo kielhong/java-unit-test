@@ -1,5 +1,6 @@
 package com.example.demo.article.adapter.out.persistence.entity;
 
+import com.example.demo.article.domain.Board;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,7 +19,20 @@ public class BoardJpaEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    public BoardJpaEntity(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public BoardJpaEntity(String name) {
         this.name = name;
+    }
+
+    public Board toDomain() {
+        return new Board(this.id, this.name);
+    }
+
+    public static BoardJpaEntity fromDomain(Board board) {
+        return new BoardJpaEntity(board.getId(), board.getName());
     }
 }
