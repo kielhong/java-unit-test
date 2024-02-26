@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -72,51 +73,55 @@ class ArticlePersistenceAdapterTest {
             .hasOnlyElementsOfType(Article.class);
     }
 
-    @Test
-    @DisplayName("Article 생성 - 응답값 verify")
-    void createArticle_returnCreatedArticle() {
-        var boardJpaEntity = BoardJpaEntityFixtures.board();
-        given(boardRepository.findById(any()))
-            .willReturn(Optional.of(boardJpaEntity));
-        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "username",
-            LocalDateTime.parse("2023-02-10T11:12:33"));
-        ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
-        given(articleRepository.save(any()))
-            .willReturn(articleJpaEntity);
+    @Nested
+    @DisplayName("Article 생성")
+    class CreateArticle {
+        private final Article article = new Article(null, new Board(5L, "board"), "subject", "content", "user", LocalDateTime.now());
 
-        var article = new Article(null, new Board(5L, "board"), "subject", "content", "uer", LocalDateTime.now());
-        var result = adapter.createArticle(article);
+        @Test
+        @DisplayName("응답값 검증")
+        void createArticle_returnCreatedArticle() {
+            var boardJpaEntity = BoardJpaEntityFixtures.board();
+            given(boardRepository.findById(any()))
+                .willReturn(Optional.of(boardJpaEntity));
+            var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "username",
+                LocalDateTime.parse("2023-02-10T11:12:33"));
+            ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
+            given(articleRepository.save(any()))
+                .willReturn(articleJpaEntity);
 
-        then(result)
-            .hasFieldOrPropertyWithValue("id", 1L)
-            .hasFieldOrPropertyWithValue("board.id", 5L)
-            .hasFieldOrPropertyWithValue("subject", "subject")
-            .hasFieldOrPropertyWithValue("content", "content")
-            .hasFieldOrPropertyWithValue("username", "username");
-    }
+            var result = adapter.createArticle(article);
 
-    @Test
-    @DisplayName("Article 생성 - verify capture")
-    void createArticle_verifySaveArg() {
-        ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
-        var boardJpaEntity = BoardJpaEntityFixtures.board();
-        given(boardRepository.findById(any()))
-            .willReturn(Optional.of(boardJpaEntity));
-        var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
-            LocalDateTime.parse("2023-02-10T11:12:33"));
-        ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
-        given(articleRepository.save(any()))
-            .willReturn(articleJpaEntity);
+            then(result)
+                .hasFieldOrPropertyWithValue("id", 1L)
+                .hasFieldOrPropertyWithValue("board.id", 5L)
+                .hasFieldOrPropertyWithValue("subject", "subject")
+                .hasFieldOrPropertyWithValue("content", "content")
+                .hasFieldOrPropertyWithValue("username", "username");
+        }
 
-        var article = new Article(null, new Board(5L, "board"), "subject", "content", "user", LocalDateTime.now());
-        adapter.createArticle(article);
+        @Test
+        @DisplayName("argumentCapture 검증")
+        void createArticle_verifySaveArg() {
+            ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
+            var boardJpaEntity = BoardJpaEntityFixtures.board();
+            given(boardRepository.findById(any()))
+                .willReturn(Optional.of(boardJpaEntity));
+            var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
+                LocalDateTime.parse("2023-02-10T11:12:33"));
+            ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
+            given(articleRepository.save(any()))
+                .willReturn(articleJpaEntity);
 
-        verify(articleRepository).save(argumentCaptor.capture());
-        then(argumentCaptor.getValue())
-            .hasFieldOrPropertyWithValue("id", null)
-            .hasFieldOrPropertyWithValue("board.id", 5L)
-            .hasFieldOrPropertyWithValue("subject", "subject")
-            .hasFieldOrPropertyWithValue("content", "content")
-            .hasFieldOrPropertyWithValue("username", "user");
+            adapter.createArticle(article);
+
+            verify(articleRepository).save(argumentCaptor.capture());
+            then(argumentCaptor.getValue())
+                .hasFieldOrPropertyWithValue("id", null)
+                .hasFieldOrPropertyWithValue("board.id", 5L)
+                .hasFieldOrPropertyWithValue("subject", "subject")
+                .hasFieldOrPropertyWithValue("content", "content")
+                .hasFieldOrPropertyWithValue("username", "user");
+        }
     }
 }
