@@ -13,8 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.PostArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,8 +33,13 @@ class ArticleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private GetArticleUseCase getArticleUseCase;
+    @MockBean
+    private PostArticleUseCase postArticleUseCase;
     @MockBean
     private DeleteArticleUseCase deleteArticleUseCase;
 
@@ -86,6 +94,31 @@ class ArticleControllerTest {
                 jsonPath("$.[0].id").value(1L),
                 jsonPath("$.[1].id").value(2L)
             );
+    }
+
+    @Nested
+    @DisplayName("POST /articles")
+    class PostArticle {
+        @Test
+        @DisplayName("생성된 articleId 반환")
+        void returnArticleId() throws Exception {
+            var createdArticle = ArticleFixtures.article();
+            given(postArticleUseCase.postArticle(any()))
+                .willReturn(createdArticle);
+
+            var body = objectMapper.writeValueAsString(Map.of("board", Map.of("id", 5L, "name", "board"), "subject", "subject", "content", "content", "username", "user"));
+            mockMvc
+                .perform(
+                    post("/articles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    jsonPath("$.id").value(createdArticle.getId())
+                );
+        }
     }
 
     @Test

@@ -1,14 +1,16 @@
 package com.example.demo.article.adapter.in.web;
 
+import com.example.demo.article.adapter.in.web.dto.CommandResponse;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.PostArticleUseCase;
+import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.in.dto.ArticleResponse;
-import java.util.Collections;
 import java.util.List;
-import org.hibernate.sql.Delete;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("articles")
 public class ArticleController {
     private final GetArticleUseCase getArticleUseCase;
+    private final PostArticleUseCase postArticleUseCase;
     private final DeleteArticleUseCase deleteArticleUseCase;
 
-    public ArticleController(GetArticleUseCase getArticleUseCase, DeleteArticleUseCase deleteArticleUseCase) {
+    public ArticleController(GetArticleUseCase getArticleUseCase, PostArticleUseCase postArticleUseCase,
+                             DeleteArticleUseCase deleteArticleUseCase) {
         this.getArticleUseCase = getArticleUseCase;
+        this.postArticleUseCase = postArticleUseCase;
         this.deleteArticleUseCase = deleteArticleUseCase;
     }
 
@@ -36,6 +41,12 @@ public class ArticleController {
         return getArticleUseCase.getArticlesByBoard(boardId).stream()
             .map(ArticleResponse::from)
             .toList();
+    }
+
+    @PostMapping
+    CommandResponse postArticle(ArticleRequest request) {
+        var article = postArticleUseCase.postArticle(request);
+        return new CommandResponse(article.getId());
     }
 
     @DeleteMapping("{articleId}")

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.PostArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -31,9 +32,10 @@ class ArticleControllerUnitTest {
     private MockMvc mockMvc;
 
     private GetArticleUseCase getArticleUseCase;
+    private PostArticleUseCase postArticleUseCase;
     private DeleteArticleUseCase deleteArticleUseCase;
 
-    ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
+    private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
         .json()
         .serializers(LocalTimeSerializer.INSTANCE)
         .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
@@ -46,7 +48,7 @@ class ArticleControllerUnitTest {
         deleteArticleUseCase = Mockito.mock(DeleteArticleUseCase.class);
 
         mockMvc = MockMvcBuilders
-            .standaloneSetup(new ArticleController(getArticleUseCase, deleteArticleUseCase))
+            .standaloneSetup(new ArticleController(getArticleUseCase, postArticleUseCase, deleteArticleUseCase))
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())
