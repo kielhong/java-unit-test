@@ -8,7 +8,6 @@ import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.in.dto.ArticleResponse;
 import java.util.List;
 import jakarta.validation.Valid;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

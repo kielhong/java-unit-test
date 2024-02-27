@@ -35,8 +35,7 @@ class ArticleControllerUnitTest {
     private PostArticleUseCase postArticleUseCase;
     private DeleteArticleUseCase deleteArticleUseCase;
 
-    private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
-        .json()
+    private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
         .serializers(LocalTimeSerializer.INSTANCE)
         .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .modules(new JavaTimeModule())
@@ -45,6 +44,7 @@ class ArticleControllerUnitTest {
     @BeforeEach
     void setUp() {
         getArticleUseCase = Mockito.mock(GetArticleUseCase.class);
+        postArticleUseCase = Mockito.mock(PostArticleUseCase.class);
         deleteArticleUseCase = Mockito.mock(DeleteArticleUseCase.class);
 
         mockMvc = MockMvcBuilders
@@ -52,7 +52,6 @@ class ArticleControllerUnitTest {
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())
-            //.setCustomArgumentResolvers(PageableHandlerMethodArgumentResolver())
             .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper), new ResourceHttpMessageConverter())
             .build();
     }

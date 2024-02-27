@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
 import com.example.demo.article.adapter.out.persistence.entity.BoardJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
-import com.example.demo.article.adapter.out.persistence.repository.BoardRepository;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
 import com.example.demo.article.out.persistence.ArticleJpaEntityFixtures;
@@ -29,14 +28,12 @@ class ArticlePersistenceAdapterTest {
     private ArticlePersistenceAdapter adapter;
 
     private ArticleRepository articleRepository;
-    private BoardRepository boardRepository;
 
     @BeforeEach
     void setUp() {
         articleRepository = Mockito.mock(ArticleRepository.class);
-        boardRepository = Mockito.mock(BoardRepository.class);
 
-        adapter = new ArticlePersistenceAdapter(articleRepository, boardRepository);
+        adapter = new ArticlePersistenceAdapter(articleRepository);
     }
 
     @Test
@@ -84,8 +81,6 @@ class ArticlePersistenceAdapterTest {
         @DisplayName("응답값 검증")
         void createArticle_returnCreatedArticle() {
             var boardJpaEntity = BoardJpaEntityFixtures.board();
-            given(boardRepository.findById(any()))
-                .willReturn(Optional.of(boardJpaEntity));
             var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
                 LocalDateTime.parse("2023-02-10T11:12:33"));
             ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
@@ -107,8 +102,6 @@ class ArticlePersistenceAdapterTest {
         void createArticle_verifySaveArg() {
             ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
             var boardJpaEntity = BoardJpaEntityFixtures.board();
-            given(boardRepository.findById(any()))
-                .willReturn(Optional.of(boardJpaEntity));
             var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
                 LocalDateTime.parse("2023-02-10T11:12:33"));
             ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
@@ -135,8 +128,6 @@ class ArticlePersistenceAdapterTest {
         final Article article = new Article(1L, new Board(6L, "new board"), "new subject", "new content", "new user", LocalDateTime.now());
         var boardJpaEntity = new BoardJpaEntity("new board");
         ReflectionTestUtils.setField(boardJpaEntity, "id", 6L);
-        given(boardRepository.findById(any()))
-            .willReturn(Optional.of(boardJpaEntity));
         var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "new subject", "new content", "new user",
             LocalDateTime.parse("2023-02-10T11:12:33"));
         ReflectionTestUtils.setField(articleJpaEntity, "id", 1L);
