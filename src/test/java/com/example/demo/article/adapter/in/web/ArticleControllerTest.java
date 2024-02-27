@@ -14,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.PostArticleUseCase;
+import com.example.demo.article.application.port.in.dto.ArticleRequest;
+import com.example.demo.article.application.port.in.dto.BoardRequest;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -68,7 +72,7 @@ class ArticleControllerTest {
 
         @Test
         @DisplayName("articleId 에 해당하는 Article이 없으면 400 Not Found")
-        void getArticle() throws Exception {
+        void notFound() throws Exception {
             given(getArticleUseCase.getArticleById(any()))
                 .willThrow(new NoSuchElementException("article not exists"));
 
@@ -117,6 +121,29 @@ class ArticleControllerTest {
                 .andExpectAll(
                     status().isOk(),
                     jsonPath("$.id").value(createdArticle.getId())
+                );
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @CsvSource(
+            value = {
+                "subject is null,,content,user",
+                "content is null,subject,,user",
+                "username is null,subject,content,",
+                "username is empty,subject,content,''"
+            }
+        )
+        void invalidParam_BadRequest(String desc, String subject, String content, String username) throws Exception {
+            var body = objectMapper.writeValueAsString(new ArticleRequest(null, new BoardRequest(5L, "board"), subject, content, username));
+            mockMvc
+                .perform(
+                    post("/articles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest()
                 );
         }
     }
