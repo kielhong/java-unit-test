@@ -2,11 +2,13 @@ package com.example.demo.article.adapter.in.web;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import java.util.List;
@@ -26,6 +28,8 @@ class ArticleControllerTest {
 
     @MockBean
     private GetArticleUseCase getArticleUseCase;
+    @MockBean
+    private DeleteArticleUseCase deleteArticleUseCase;
 
     @Nested
     @DisplayName("GET /articles/{articleId}")
@@ -77,6 +81,16 @@ class ArticleControllerTest {
                 jsonPath("$.size()").value(2),
                 jsonPath("$.[0].id").value(1L),
                 jsonPath("$.[1].id").value(2L)
+            );
+    }
+
+    @Test
+    @DisplayName("DELETE /articles/{articleId}")
+    void deleteArticle() throws Exception {
+        mockMvc.perform(delete("/articles/{articleId}", 1L))
+            .andDo(print())
+            .andExpectAll(
+                status().isOk()
             );
     }
 }

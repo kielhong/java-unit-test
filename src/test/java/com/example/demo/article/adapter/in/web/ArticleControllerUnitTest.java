@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,7 @@ class ArticleControllerUnitTest {
     private MockMvc mockMvc;
 
     private GetArticleUseCase getArticleUseCase;
+    private DeleteArticleUseCase deleteArticleUseCase;
 
     ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
         .json()
@@ -41,9 +43,10 @@ class ArticleControllerUnitTest {
     @BeforeEach
     void setUp() {
         getArticleUseCase = Mockito.mock(GetArticleUseCase.class);
+        deleteArticleUseCase = Mockito.mock(DeleteArticleUseCase.class);
 
         mockMvc = MockMvcBuilders
-            .standaloneSetup(new ArticleController(getArticleUseCase))
+            .standaloneSetup(new ArticleController(getArticleUseCase, deleteArticleUseCase))
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())
@@ -57,7 +60,7 @@ class ArticleControllerUnitTest {
     class GetArticle {
         @Test
         @DisplayName("Article이 있으면, 200 OK return response")
-        void returnResposne() throws Exception {
+        void returnResponse() throws Exception {
             var article = ArticleFixtures.article();
             given(getArticleUseCase.getArticleById(any()))
                 .willReturn(article);
