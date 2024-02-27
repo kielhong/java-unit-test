@@ -4,12 +4,9 @@ import java.util.Random;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 class JunitAssertJMockitoTest {
     private Combat combat;

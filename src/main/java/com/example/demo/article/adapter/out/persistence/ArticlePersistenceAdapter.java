@@ -2,13 +2,10 @@ package com.example.demo.article.adapter.out.persistence;
 
 import com.example.demo.article.adapter.out.persistence.entity.ArticleJpaEntity;
 import com.example.demo.article.adapter.out.persistence.repository.ArticleRepository;
-import com.example.demo.article.adapter.out.persistence.repository.BoardRepository;
-import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -16,11 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticlePort {
     private final ArticleRepository articleRepository;
-    private final BoardRepository boardRepository;
 
-    public ArticlePersistenceAdapter(ArticleRepository articleRepository, BoardRepository boardRepository) {
+    public ArticlePersistenceAdapter(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
-        this.boardRepository = boardRepository;
     }
 
     @Override

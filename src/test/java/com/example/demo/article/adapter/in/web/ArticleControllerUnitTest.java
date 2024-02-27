@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.PostArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -30,9 +32,10 @@ class ArticleControllerUnitTest {
     private MockMvc mockMvc;
 
     private GetArticleUseCase getArticleUseCase;
+    private PostArticleUseCase postArticleUseCase;
+    private DeleteArticleUseCase deleteArticleUseCase;
 
-    ObjectMapper objectMapper = Jackson2ObjectMapperBuilder
-        .json()
+    private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
         .serializers(LocalTimeSerializer.INSTANCE)
         .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .modules(new JavaTimeModule())
@@ -41,13 +44,14 @@ class ArticleControllerUnitTest {
     @BeforeEach
     void setUp() {
         getArticleUseCase = Mockito.mock(GetArticleUseCase.class);
+        postArticleUseCase = Mockito.mock(PostArticleUseCase.class);
+        deleteArticleUseCase = Mockito.mock(DeleteArticleUseCase.class);
 
         mockMvc = MockMvcBuilders
-            .standaloneSetup(new ArticleController(getArticleUseCase))
+            .standaloneSetup(new ArticleController(getArticleUseCase, postArticleUseCase, deleteArticleUseCase))
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())
-            //.setCustomArgumentResolvers(PageableHandlerMethodArgumentResolver())
             .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper), new ResourceHttpMessageConverter())
             .build();
     }
@@ -57,7 +61,7 @@ class ArticleControllerUnitTest {
     class GetArticle {
         @Test
         @DisplayName("Article이 있으면, 200 OK return response")
-        void returnResposne() throws Exception {
+        void returnResponse() throws Exception {
             var article = ArticleFixtures.article();
             given(getArticleUseCase.getArticleById(any()))
                 .willReturn(article);
