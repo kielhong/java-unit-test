@@ -104,7 +104,7 @@ class ArticleServiceTest {
             given(commandArticlePort.createArticle(any()))
                 .willReturn(article);
 
-            var result = sut.postArticle(request);
+            var result = sut.createArticle(request);
 
             then(result)
                 .isEqualTo(article);
@@ -116,7 +116,7 @@ class ArticleServiceTest {
             given(loadBoardPort.findBoardById(any()))
                 .willReturn(Optional.empty());
 
-            thenThrownBy(() -> sut.postArticle(request))
+            thenThrownBy(() -> sut.createArticle(request))
                 .isInstanceOf(NoSuchElementException.class);
         }
     }

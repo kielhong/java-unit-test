@@ -3,7 +3,7 @@ package com.example.demo.article.application.service;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.article.application.port.in.PostArticleUseCase;
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArticleService implements GetArticleUseCase, PostArticleUseCase, ModifyArticleUseCase, DeleteArticleUseCase {
+public class ArticleService implements GetArticleUseCase, CreateArticleUseCase, ModifyArticleUseCase, DeleteArticleUseCase {
     private final LoadArticlePort loadArticlePort;
     private final CommandArticlePort commandArticlePort;
     private final LoadBoardPort loadBoardPort;
@@ -37,7 +37,7 @@ public class ArticleService implements GetArticleUseCase, PostArticleUseCase, Mo
     }
 
     @Override
-    public Article postArticle(ArticleRequest request) {
+    public Article createArticle(ArticleRequest request) {
         loadBoardPort.findBoardById(request.board().id())
             .orElseThrow();
         return commandArticlePort.createArticle(request.toDomain());
