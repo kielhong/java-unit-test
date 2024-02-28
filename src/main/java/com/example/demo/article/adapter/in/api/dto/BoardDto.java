@@ -1,4 +1,4 @@
-package com.example.demo.article.adapter.in.web.dto;
+package com.example.demo.article.adapter.in.api.dto;
 
 public record BoardDto(
     Long id,

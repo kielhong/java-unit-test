@@ -1,4 +1,4 @@
-package com.example.demo.article.adapter.in.web;
+package com.example.demo.article.adapter.in.api;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
