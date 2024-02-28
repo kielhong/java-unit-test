@@ -18,7 +18,7 @@ class UserClientTest {
 
     @BeforeAll
     static void startServer() {
-        mockServer = startClientAndServer(1000);
+        mockServer = startClientAndServer(1234);
     }
 
     @AfterAll
@@ -28,7 +28,7 @@ class UserClientTest {
 
     @BeforeEach
     void setUp() {
-        userClient = new UserClient();
+        userClient = new UserClient(1234);
     }
 
     @Test
