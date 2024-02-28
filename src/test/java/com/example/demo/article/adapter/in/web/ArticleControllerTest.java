@@ -13,20 +13,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.demo.article.adapter.in.web.dto.ArticleDto;
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.application.port.in.GetBoardUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.article.application.port.in.CreateArticleUseCase;
-import com.example.demo.article.application.port.in.dto.BoardRequest;
 import com.example.demo.article.domain.ArticleFixtures;
-import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,8 +50,6 @@ class ArticleControllerTest {
     private ModifyArticleUseCase modifyArticleUseCase;
     @MockBean
     private DeleteArticleUseCase deleteArticleUseCase;
-    @MockBean
-    private GetBoardUseCase getBoardUseCase;
 
     @Nested
     @DisplayName("GET /articles/{articleId}")
@@ -116,8 +110,6 @@ class ArticleControllerTest {
         @Test
         @DisplayName("생성된 articleId 반환")
         void returnArticleId() throws Exception {
-            given(getBoardUseCase.getBoardById(any()))
-                .willReturn(BoardFixtures.board());
             var createdArticle = ArticleFixtures.article();
             given(createArticleUseCase.createArticle(any()))
                 .willReturn(createdArticle);

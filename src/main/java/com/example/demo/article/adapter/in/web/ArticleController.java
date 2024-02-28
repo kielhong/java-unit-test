@@ -1,13 +1,12 @@
 package com.example.demo.article.adapter.in.web;
 
 import com.example.demo.article.adapter.in.web.dto.ArticleDto;
-import com.example.demo.article.application.port.in.GetBoardUseCase;
-import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.common.web.dto.CommandResponse;
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.application.port.in.CreateArticleUseCase;
+import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleResponse;
+import com.example.demo.common.web.dto.CommandResponse;
 import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,16 +26,13 @@ public class ArticleController {
     private final CreateArticleUseCase createArticleUseCase;
     private final ModifyArticleUseCase modifyArticleUseCase;
     private final DeleteArticleUseCase deleteArticleUseCase;
-    private final GetBoardUseCase getBoardUseCase;
 
     public ArticleController(GetArticleUseCase getArticleUseCase, CreateArticleUseCase createArticleUseCase,
-                             ModifyArticleUseCase modifyArticleUseCase, DeleteArticleUseCase deleteArticleUseCase,
-                             GetBoardUseCase getBoardUseCase) {
+                             ModifyArticleUseCase modifyArticleUseCase, DeleteArticleUseCase deleteArticleUseCase) {
         this.getArticleUseCase = getArticleUseCase;
         this.createArticleUseCase = createArticleUseCase;
         this.modifyArticleUseCase = modifyArticleUseCase;
         this.deleteArticleUseCase = deleteArticleUseCase;
-        this.getBoardUseCase = getBoardUseCase;
     }
 
     @GetMapping("{articleId}")
@@ -55,10 +51,7 @@ public class ArticleController {
 
     @PostMapping
     CommandResponse postArticle(@Valid @RequestBody ArticleDto.CreateArticleRequest request) {
-        var board = getBoardUseCase.getBoardById(request.boardId());
-        var article = request.toDomain(board);
-
-        var createdArticle = createArticleUseCase.createArticle(article);
+        var createdArticle = createArticleUseCase.createArticle(request);
         return new CommandResponse(createdArticle.getId());
     }
 

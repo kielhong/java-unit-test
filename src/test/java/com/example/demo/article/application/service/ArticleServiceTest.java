@@ -17,7 +17,6 @@ import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.domain.Board;
 import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -32,13 +31,15 @@ class ArticleServiceTest {
 
     private LoadArticlePort loadArticlePort;
     private CommandArticlePort commandArticlePort;
+    private LoadBoardPort loadBoardPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
         commandArticlePort = Mockito.mock(CommandArticlePort.class);
+        loadBoardPort = Mockito.mock(LoadBoardPort.class);
 
-        sut = new ArticleService(loadArticlePort, commandArticlePort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @Nested
@@ -97,12 +98,15 @@ class ArticleServiceTest {
         @Test
         @DisplayName("생성된 Article 반환")
         void returnCreatedArticleId() {
+            var board = BoardFixtures.board();
+            given(loadBoardPort.findBoardById(any()))
+                .willReturn(Optional.of(board));
             var createdArticle = ArticleFixtures.article();
             given(commandArticlePort.createArticle(any()))
                 .willReturn(createdArticle);
 
             var article = request.toDomain(new Board(5L, "board"));
-            var result = sut.createArticle(article);
+            var result = sut.createArticle(request);
 
             then(result)
                 .isEqualTo(createdArticle);

@@ -7,11 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.application.port.in.GetBoardUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.web.GlobalControllerAdvice;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +37,6 @@ class ArticleControllerUnitTest {
     private CreateArticleUseCase createArticleUseCase;
     private ModifyArticleUseCase modifyArticleUseCase;
     private DeleteArticleUseCase deleteArticleUseCase;
-    private GetBoardUseCase getBoardUseCase;
 
     private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
         .serializers(LocalTimeSerializer.INSTANCE)
@@ -52,11 +50,9 @@ class ArticleControllerUnitTest {
         createArticleUseCase = Mockito.mock(CreateArticleUseCase.class);
         modifyArticleUseCase = Mockito.mock(ModifyArticleUseCase.class);
         deleteArticleUseCase = Mockito.mock(DeleteArticleUseCase.class);
-        getBoardUseCase = Mockito.mock(GetBoardUseCase.class);
-
 
         mockMvc = MockMvcBuilders
-            .standaloneSetup(new ArticleController(getArticleUseCase, createArticleUseCase, modifyArticleUseCase, deleteArticleUseCase, getBoardUseCase))
+            .standaloneSetup(new ArticleController(getArticleUseCase, createArticleUseCase, modifyArticleUseCase, deleteArticleUseCase))
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())

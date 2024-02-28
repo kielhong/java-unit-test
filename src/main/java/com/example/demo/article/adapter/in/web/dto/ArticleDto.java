@@ -23,7 +23,7 @@ public class ArticleDto {
         }
     }
 
-    public static record UpdateArticleRequest(
+    public record UpdateArticleRequest(
         Long id,
         @NotNull
         BoardRequest board,
@@ -33,9 +33,5 @@ public class ArticleDto {
         String content,
         @NotEmpty
         String username
-    ) {
-        public Article toDomain() {
-            return new Article(id, board.toDomain(), subject, content, username, LocalDateTime.now());
-        }
-    }
+    ) { }
 }

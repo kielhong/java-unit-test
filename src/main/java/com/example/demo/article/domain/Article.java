@@ -23,7 +23,6 @@ public class Article {
     }
 
     public void update(ArticleDto.UpdateArticleRequest request) {
-        this.board = request.toDomain().getBoard();
         this.subject = request.subject();
         this.content = request.content();
     }
