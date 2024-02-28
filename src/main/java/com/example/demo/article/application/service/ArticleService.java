@@ -38,7 +38,7 @@ public class ArticleService implements GetArticleUseCase, CreateArticleUseCase, 
 
     @Override
     public Article createArticle(ArticleRequest request) {
-        loadBoardPort.findBoardById(request.board().id())
+        var board = loadBoardPort.findBoardById(request.board().id())
             .orElseThrow();
         return commandArticlePort.createArticle(request.toDomain());
     }
