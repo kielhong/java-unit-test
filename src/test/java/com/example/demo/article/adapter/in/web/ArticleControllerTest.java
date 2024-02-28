@@ -12,18 +12,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.adapter.in.web.dto.ArticleDto;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.GetBoardUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.application.port.in.CreateArticleUseCase;
-import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.in.dto.BoardRequest;
 import com.example.demo.article.domain.ArticleFixtures;
+import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,6 +54,8 @@ class ArticleControllerTest {
     private ModifyArticleUseCase modifyArticleUseCase;
     @MockBean
     private DeleteArticleUseCase deleteArticleUseCase;
+    @MockBean
+    private GetBoardUseCase getBoardUseCase;
 
     @Nested
     @DisplayName("GET /articles/{articleId}")
@@ -111,11 +116,13 @@ class ArticleControllerTest {
         @Test
         @DisplayName("생성된 articleId 반환")
         void returnArticleId() throws Exception {
+            given(getBoardUseCase.getBoardById(any()))
+                .willReturn(BoardFixtures.board());
             var createdArticle = ArticleFixtures.article();
             given(createArticleUseCase.createArticle(any()))
                 .willReturn(createdArticle);
 
-            var body = objectMapper.writeValueAsString(Map.of("board", Map.of("id", 5L, "name", "board"), "subject", "subject", "content", "content", "username", "user"));
+            var body = objectMapper.writeValueAsString(Map.of("boardId", 5L, "subject", "subject", "content", "content", "username", "user"));
             mockMvc
                 .perform(
                     post("/articles")
@@ -130,6 +137,7 @@ class ArticleControllerTest {
         }
 
         @ParameterizedTest(name = "{0}")
+        @DisplayName("비정상 패러미터이면 BadRequest")
         @CsvSource(
             value = {
                 "subject is null,,content,user",
@@ -139,7 +147,7 @@ class ArticleControllerTest {
             }
         )
         void invalidParam_BadRequest(String desc, String subject, String content, String username) throws Exception {
-            var body = objectMapper.writeValueAsString(new ArticleRequest(null, new BoardRequest(5L, "board"), subject, content, username));
+            var body = objectMapper.writeValueAsString(new ArticleDto.CreateArticleRequest(5L, subject, content, username));
             mockMvc
                 .perform(
                     post("/articles")
@@ -185,7 +193,7 @@ class ArticleControllerTest {
             }
         )
         void invalidParam_BadRequest(String desc, String subject, String content, String username) throws Exception {
-            var body = objectMapper.writeValueAsString(new ArticleRequest(null, new BoardRequest(5L, "board"), subject, content, username));
+            var body = objectMapper.writeValueAsString(new ArticleDto.CreateArticleRequest(5L, subject, content, username));
             mockMvc
                 .perform(
                     put("/articles")
