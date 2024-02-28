@@ -6,16 +6,10 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class UserClient implements LoadUserPort {
-    private Integer port;
-
-    public UserClient(Integer port) {
-        this.port = port;
-    }
-
     @Override
     public boolean existsUser(String username) {
         RestTemplate restTemplate = new RestTemplate();
-        var url = "http://localhost:" + port + "/users/";
+        var url = "http://localhost:1234/users/";
         var response = restTemplate.getForEntity(url + "/" + username, String.class);
 
         return response.getStatusCode().is2xxSuccessful();

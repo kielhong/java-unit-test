@@ -28,7 +28,7 @@ class UserClientTest {
 
     @BeforeEach
     void setUp() {
-        userClient = new UserClient(1234);
+        userClient = new UserClient();
     }
 
     @Test
