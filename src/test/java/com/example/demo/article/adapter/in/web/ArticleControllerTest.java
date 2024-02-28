@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.article.application.port.in.PostArticleUseCase;
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.in.dto.BoardRequest;
 import com.example.demo.article.domain.ArticleFixtures;
@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -47,7 +46,7 @@ class ArticleControllerTest {
     @MockBean
     private GetArticleUseCase getArticleUseCase;
     @MockBean
-    private PostArticleUseCase postArticleUseCase;
+    private CreateArticleUseCase createArticleUseCase;
     @MockBean
     private ModifyArticleUseCase modifyArticleUseCase;
     @MockBean
@@ -113,7 +112,7 @@ class ArticleControllerTest {
         @DisplayName("생성된 articleId 반환")
         void returnArticleId() throws Exception {
             var createdArticle = ArticleFixtures.article();
-            given(postArticleUseCase.postArticle(any()))
+            given(createArticleUseCase.createArticle(any()))
                 .willReturn(createdArticle);
 
             var body = objectMapper.writeValueAsString(Map.of("board", Map.of("id", 5L, "name", "board"), "subject", "subject", "content", "content", "username", "user"));

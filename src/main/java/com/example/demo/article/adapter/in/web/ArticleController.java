@@ -4,7 +4,7 @@ import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.common.web.dto.CommandResponse;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.application.port.in.PostArticleUseCase;
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.in.dto.ArticleResponse;
 import java.util.List;
@@ -23,14 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("articles")
 public class ArticleController {
     private final GetArticleUseCase getArticleUseCase;
-    private final PostArticleUseCase postArticleUseCase;
+    private final CreateArticleUseCase createArticleUseCase;
     private final ModifyArticleUseCase modifyArticleUseCase;
     private final DeleteArticleUseCase deleteArticleUseCase;
 
-    public ArticleController(GetArticleUseCase getArticleUseCase, PostArticleUseCase postArticleUseCase,
+    public ArticleController(GetArticleUseCase getArticleUseCase, CreateArticleUseCase createArticleUseCase,
                              ModifyArticleUseCase modifyArticleUseCase, DeleteArticleUseCase deleteArticleUseCase) {
         this.getArticleUseCase = getArticleUseCase;
-        this.postArticleUseCase = postArticleUseCase;
+        this.createArticleUseCase = createArticleUseCase;
         this.modifyArticleUseCase = modifyArticleUseCase;
         this.deleteArticleUseCase = deleteArticleUseCase;
     }
@@ -51,7 +51,7 @@ public class ArticleController {
 
     @PostMapping
     CommandResponse postArticle(@Valid @RequestBody ArticleRequest request) {
-        var article = postArticleUseCase.postArticle(request);
+        var article = createArticleUseCase.createArticle(request);
         return new CommandResponse(article.getId());
     }
 
