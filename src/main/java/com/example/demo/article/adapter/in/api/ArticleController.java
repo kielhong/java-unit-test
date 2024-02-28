@@ -1,6 +1,6 @@
-package com.example.demo.article.adapter.in.web;
+package com.example.demo.article.adapter.in.api;
 
-import com.example.demo.article.adapter.in.web.dto.ArticleDto;
+import com.example.demo.article.adapter.in.api.dto.ArticleDto;
 import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
@@ -38,13 +38,13 @@ public class ArticleController {
     ArticleDto.ArticleResponse getArticle(@PathVariable Long articleId) {
         var article = getArticleUseCase.getArticleById(articleId);
 
-        return ArticleDto.ArticleResponse.from(article);
+        return ArticleDto.ArticleResponse.of(article);
     }
 
     @GetMapping(params = "boardId")
     List<ArticleDto.ArticleResponse> listArticlesByBoard(@RequestParam Long boardId) {
         return getArticleUseCase.getArticlesByBoard(boardId).stream()
-            .map(ArticleDto.ArticleResponse::from)
+            .map(ArticleDto.ArticleResponse::of)
             .toList();
     }
 

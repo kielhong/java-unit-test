@@ -7,11 +7,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
-import com.example.demo.article.adapter.in.web.dto.ArticleDto;
-import com.example.demo.article.adapter.in.web.dto.BoardDto;
+import com.example.demo.article.adapter.in.api.dto.ArticleDto;
+import com.example.demo.article.adapter.in.api.dto.BoardDto;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
+import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.domain.Board;
@@ -32,14 +33,16 @@ class ArticleServiceTest {
     private LoadArticlePort loadArticlePort;
     private CommandArticlePort commandArticlePort;
     private LoadBoardPort loadBoardPort;
+    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
         commandArticlePort = Mockito.mock(CommandArticlePort.class);
         loadBoardPort = Mockito.mock(LoadBoardPort.class);
+        loadUserPort = Mockito.mock(LoadUserPort.class);
 
-        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
     }
 
     @Nested
@@ -101,15 +104,29 @@ class ArticleServiceTest {
             var board = BoardFixtures.board();
             given(loadBoardPort.findBoardById(any()))
                 .willReturn(Optional.of(board));
+            given(loadUserPort.existsUser(any()))
+                .willReturn(true);
             var createdArticle = ArticleFixtures.article();
             given(commandArticlePort.createArticle(any()))
                 .willReturn(createdArticle);
 
-            var article = request.toDomain(new Board(5L, "board"));
             var result = sut.createArticle(request);
 
             then(result)
                 .isEqualTo(createdArticle);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 작성자이면 AccessDeniedException")
+        void throwAccessDeniedException() {
+            var board = BoardFixtures.board();
+            given(loadBoardPort.findBoardById(any()))
+                .willReturn(Optional.of(board));
+            given(loadUserPort.existsUser(any()))
+                .willReturn(false);
+
+            thenThrownBy(() -> sut.createArticle(request))
+                .isInstanceOf(AccessDeniedException.class);
         }
     }
 

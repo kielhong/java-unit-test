@@ -1,4 +1,4 @@
-package com.example.demo.article.adapter.in.web.dto;
+package com.example.demo.article.adapter.in.api.dto;
 
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
@@ -16,11 +16,7 @@ public class ArticleDto {
         String content,
         @NotEmpty
         String username
-    ) {
-        public Article toDomain(Board board) {
-            return new Article(null, board, subject, content, username, LocalDateTime.now());
-        }
-    }
+    ) { }
 
     public record UpdateArticleRequest(
         Long id,
@@ -42,7 +38,7 @@ public class ArticleDto {
         String username,
         LocalDateTime createdAt
     ) {
-        public static ArticleResponse from(Article article) {
+        public static ArticleResponse of(Article article) {
             return new ArticleResponse(
                 article.getId(),
                 article.getBoard(),
