@@ -1,6 +1,6 @@
 package com.example.demo.article.adapter.in.web;
 
-import com.example.demo.article.adapter.in.web.dto.CommandResponse;
+import com.example.demo.common.web.dto.CommandResponse;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.PostArticleUseCase;

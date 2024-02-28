@@ -1,6 +1,6 @@
-package com.example.demo.article.adapter.in.web;
+package com.example.demo.common.web;
 
-import com.example.demo.article.adapter.in.web.dto.ErrorMessage;
+import com.example.demo.common.web.dto.ErrorMessage;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
