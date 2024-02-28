@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.application.port.in.PostArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.web.GlobalControllerAdvice;
@@ -34,6 +35,7 @@ class ArticleControllerUnitTest {
 
     private GetArticleUseCase getArticleUseCase;
     private PostArticleUseCase postArticleUseCase;
+    private ModifyArticleUseCase modifyArticleUseCase;
     private DeleteArticleUseCase deleteArticleUseCase;
 
     private final ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json()
@@ -46,10 +48,11 @@ class ArticleControllerUnitTest {
     void setUp() {
         getArticleUseCase = Mockito.mock(GetArticleUseCase.class);
         postArticleUseCase = Mockito.mock(PostArticleUseCase.class);
+        modifyArticleUseCase = Mockito.mock(ModifyArticleUseCase.class);
         deleteArticleUseCase = Mockito.mock(DeleteArticleUseCase.class);
 
         mockMvc = MockMvcBuilders
-            .standaloneSetup(new ArticleController(getArticleUseCase, postArticleUseCase, deleteArticleUseCase))
+            .standaloneSetup(new ArticleController(getArticleUseCase, postArticleUseCase, modifyArticleUseCase, deleteArticleUseCase))
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())

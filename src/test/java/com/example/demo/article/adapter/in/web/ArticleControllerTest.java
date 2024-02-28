@@ -7,16 +7,19 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
+import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.application.port.in.PostArticleUseCase;
 import com.example.demo.article.application.port.in.dto.ArticleRequest;
 import com.example.demo.article.application.port.in.dto.BoardRequest;
 import com.example.demo.article.domain.ArticleFixtures;
+import com.example.demo.common.exception.AccessDeniedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +48,8 @@ class ArticleControllerTest {
     private GetArticleUseCase getArticleUseCase;
     @MockBean
     private PostArticleUseCase postArticleUseCase;
+    @MockBean
+    private ModifyArticleUseCase modifyArticleUseCase;
     @MockBean
     private DeleteArticleUseCase deleteArticleUseCase;
 
@@ -144,6 +150,70 @@ class ArticleControllerTest {
                 .andDo(print())
                 .andExpectAll(
                     status().isBadRequest()
+                );
+        }
+    }
+
+    @Nested
+    @DisplayName("PUT /articles")
+    class PutArticle {
+        @Test
+        @DisplayName("변경된 Article의 articleId 반환")
+        void returnArticleId() throws Exception {
+            var modifiedArticle = ArticleFixtures.article();
+            given(modifyArticleUseCase.modifyArticle(any()))
+                .willReturn(modifiedArticle);
+
+            var body = objectMapper.writeValueAsString(Map.of("id", 1L, "board", Map.of("id", 5L, "name", "board"), "subject", "new subject", "content", "new content", "username", "user"));
+            mockMvc
+                .perform(
+                    put("/articles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andDo(print())
+                .andExpectAll(
+                    status().isOk(),
+                    jsonPath("$.id").value(modifiedArticle.getId())
+                );
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @CsvSource(
+            value = {
+                "subject is null,,content,user",
+                "content is null,subject,,user"
+            }
+        )
+        void invalidParam_BadRequest(String desc, String subject, String content, String username) throws Exception {
+            var body = objectMapper.writeValueAsString(new ArticleRequest(null, new BoardRequest(5L, "board"), subject, content, username));
+            mockMvc
+                .perform(
+                    put("/articles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andDo(print())
+                .andExpectAll(
+                    status().isBadRequest()
+                );
+        }
+
+        @Test
+        void otherUser_Forbidden() throws Exception {
+            given(modifyArticleUseCase.modifyArticle(any()))
+                .willThrow(new AccessDeniedException("다른 작성자는 수정 불가능"));
+
+            var body = objectMapper.writeValueAsString(Map.of("id", 1L, "board", Map.of("id", 5L, "name", "board"), "subject", "new subject", "content", "new content", "username", "otheruser"));
+            mockMvc
+                .perform(
+                    put("/articles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)
+                )
+                .andDo(print())
+                .andExpectAll(
+                    status().isForbidden()
                 );
         }
     }
