@@ -5,7 +5,6 @@ import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.article.application.port.in.dto.ArticleResponse;
 import com.example.demo.common.web.dto.CommandResponse;
 import java.util.List;
 import jakarta.validation.Valid;
@@ -36,16 +35,16 @@ public class ArticleController {
     }
 
     @GetMapping("{articleId}")
-    ArticleResponse getArticle(@PathVariable Long articleId) {
+    ArticleDto.ArticleResponse getArticle(@PathVariable Long articleId) {
         var article = getArticleUseCase.getArticleById(articleId);
 
-        return ArticleResponse.from(article);
+        return ArticleDto.ArticleResponse.from(article);
     }
 
     @GetMapping(params = "boardId")
-    List<ArticleResponse> listArticlesByBoard(@RequestParam Long boardId) {
+    List<ArticleDto.ArticleResponse> listArticlesByBoard(@RequestParam Long boardId) {
         return getArticleUseCase.getArticlesByBoard(boardId).stream()
-            .map(ArticleResponse::from)
+            .map(ArticleDto.ArticleResponse::from)
             .toList();
     }
 

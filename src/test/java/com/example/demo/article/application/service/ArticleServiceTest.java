@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 import com.example.demo.article.adapter.in.web.dto.ArticleDto;
-import com.example.demo.article.application.port.in.dto.BoardRequest;
+import com.example.demo.article.adapter.in.web.dto.BoardDto;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
@@ -121,7 +121,7 @@ class ArticleServiceTest {
 
         @BeforeEach
         void setUp() {
-            request = new ArticleDto.UpdateArticleRequest(6L, new BoardRequest(6L, "board"), "new subject", "new content", "user");
+            request = new ArticleDto.UpdateArticleRequest(6L, new BoardDto(6L, "board"), "new subject", "new content", "user");
         }
 
         @Test
@@ -155,7 +155,7 @@ class ArticleServiceTest {
         @Test
         @DisplayName("user 가 다르면 AccessDeniedException throw")
         void otherUser_throwException() {
-            var request = new ArticleDto.UpdateArticleRequest(6L, new BoardRequest(6L, "board"), "new subject", "new content", "other user");
+            var request = new ArticleDto.UpdateArticleRequest(6L, new BoardDto(6L, "board"), "new subject", "new content", "other user");
 
             var article = ArticleFixtures.article();
             given(loadArticlePort.findArticleById(any()))
