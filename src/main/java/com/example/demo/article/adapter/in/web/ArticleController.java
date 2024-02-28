@@ -1,12 +1,11 @@
 package com.example.demo.article.adapter.in.web;
 
-import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.common.web.dto.CommandResponse;
+import com.example.demo.article.adapter.in.web.dto.ArticleDto;
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
-import com.example.demo.article.application.port.in.CreateArticleUseCase;
-import com.example.demo.article.application.port.in.dto.ArticleRequest;
-import com.example.demo.article.application.port.in.dto.ArticleResponse;
+import com.example.demo.article.application.port.in.ModifyArticleUseCase;
+import com.example.demo.common.web.dto.CommandResponse;
 import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,27 +35,27 @@ public class ArticleController {
     }
 
     @GetMapping("{articleId}")
-    ArticleResponse getArticle(@PathVariable Long articleId) {
+    ArticleDto.ArticleResponse getArticle(@PathVariable Long articleId) {
         var article = getArticleUseCase.getArticleById(articleId);
 
-        return ArticleResponse.from(article);
+        return ArticleDto.ArticleResponse.from(article);
     }
 
     @GetMapping(params = "boardId")
-    List<ArticleResponse> listArticlesByBoard(@RequestParam Long boardId) {
+    List<ArticleDto.ArticleResponse> listArticlesByBoard(@RequestParam Long boardId) {
         return getArticleUseCase.getArticlesByBoard(boardId).stream()
-            .map(ArticleResponse::from)
+            .map(ArticleDto.ArticleResponse::from)
             .toList();
     }
 
     @PostMapping
-    CommandResponse postArticle(@Valid @RequestBody ArticleRequest request) {
-        var article = createArticleUseCase.createArticle(request);
-        return new CommandResponse(article.getId());
+    CommandResponse postArticle(@Valid @RequestBody ArticleDto.CreateArticleRequest request) {
+        var createdArticle = createArticleUseCase.createArticle(request);
+        return new CommandResponse(createdArticle.getId());
     }
 
     @PutMapping
-    CommandResponse putArticle(@Valid @RequestBody ArticleRequest request) {
+    CommandResponse putArticle(@Valid @RequestBody ArticleDto.UpdateArticleRequest request) {
         var article = modifyArticleUseCase.modifyArticle(request);
         return new CommandResponse(article.getId());
     }

@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.web.GlobalControllerAdvice;
 import com.fasterxml.jackson.databind.ObjectMapper;

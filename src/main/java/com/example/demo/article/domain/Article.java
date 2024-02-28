@@ -1,6 +1,6 @@
 package com.example.demo.article.domain;
 
-import com.example.demo.article.application.port.in.dto.ArticleRequest;
+import com.example.demo.article.adapter.in.web.dto.ArticleDto;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
@@ -22,8 +22,7 @@ public class Article {
         this.createdAt = createdAt;
     }
 
-    public void update(ArticleRequest request) {
-        this.board = request.toDomain().getBoard();
+    public void update(ArticleDto.UpdateArticleRequest request) {
         this.subject = request.subject();
         this.content = request.content();
     }
