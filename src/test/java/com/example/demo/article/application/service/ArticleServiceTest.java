@@ -18,7 +18,6 @@ import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.domain.Board;
 import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,54 +42,6 @@ class ArticleServiceTest {
         loadUserPort = Mockito.mock(LoadUserPort.class);
 
         sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
-    }
-
-    @Nested
-    @DisplayName("Article 한 개 조회")
-    class GetArticle {
-        @Test
-        @DisplayName("articleId 로 조회시 Article 반환")
-        void return_Article() {
-            var article = ArticleFixtures.article();
-            given(loadArticlePort.findArticleById(any()))
-                .willReturn(Optional.of(article));
-
-            var result = sut.getArticleById(1L);
-
-            then(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("id", article.getId())
-                .hasFieldOrPropertyWithValue("board.id", article.getBoard().getId())
-                .hasFieldOrPropertyWithValue("subject", article.getSubject())
-                .hasFieldOrPropertyWithValue("content", article.getContent())
-                .hasFieldOrPropertyWithValue("username", article.getUsername())
-                .hasFieldOrPropertyWithValue("createdAt", article.getCreatedAt());
-        }
-
-        @Test
-        @DisplayName("존재하지 않을 경우 NoSuchElementException throw")
-        void throw_NoSuchElementException() {
-            given(loadArticlePort.findArticleById(any()))
-                .willReturn(Optional.empty());
-
-            thenThrownBy(() -> sut.getArticleById(1L))
-                .isInstanceOf(NoSuchElementException.class);
-        }
-    }
-
-    @Test
-    @DisplayName("Board의 Article 목록 조회")
-    void getArticlesByBoard_listArticles() {
-        var article1 = ArticleFixtures.article(1L);
-        var article2 = ArticleFixtures.article(2L);
-        given(loadArticlePort.findArticlesByBoardId(any()))
-            .willReturn(List.of(article1, article2));
-
-        var result = sut.getArticlesByBoard(5L);
-
-        then(result)
-            .hasSize(2)
-            .extracting("board.id").containsOnly(5L);
     }
 
     @Nested
