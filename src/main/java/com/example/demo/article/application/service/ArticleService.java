@@ -12,6 +12,7 @@ import com.example.demo.article.domain.Article;
 import com.example.demo.common.exception.AccessDeniedException;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ArticleService implements CreateArticleUseCase, ModifyArticleUseCase, DeleteArticleUseCase {
@@ -29,11 +30,18 @@ public class ArticleService implements CreateArticleUseCase, ModifyArticleUseCas
 
     @Override
     public Article createArticle(ArticleDto.CreateArticleRequest request) {
-        var board = loadBoardPort.findBoardById(request.boardId())
-            .orElseThrow();
+        if (!StringUtils.hasLength(request.subject()) || !StringUtils.hasLength(request.content()) || request.username() == null) {
+            throw new IllegalArgumentException("invalid param");
+        }
+
         if (!loadUserPort.existsUser(request.username())) {
             throw new AccessDeniedException(request.username() + " not exists");
         }
+
+        var board = loadBoardPort.findBoardById(request.boardId())
+            .orElseThrow();
+
+
 
         var article = new Article(null, board, request.subject(), request.content(), request.username(), LocalDateTime.now());
         return commandArticlePort.createArticle(article);

@@ -20,10 +20,14 @@ import com.example.demo.article.domain.BoardFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 class ArticleServiceTest {
@@ -47,14 +51,19 @@ class ArticleServiceTest {
     @Nested
     @DisplayName("Article 생성")
     class PostArticle {
-        private final ArticleDto.CreateArticleRequest request = new ArticleDto.CreateArticleRequest(5L, "subject", "content", "user");
+        private final Board board = BoardFixtures.board();
+
+        @BeforeEach
+        void setUp() {
+            given(loadBoardPort.findBoardById(any()))
+                .willReturn(Optional.of(board));
+        }
 
         @Test
         @DisplayName("생성된 Article 반환")
         void returnCreatedArticleId() {
-            var board = BoardFixtures.board();
-            given(loadBoardPort.findBoardById(any()))
-                .willReturn(Optional.of(board));
+            var request = new ArticleDto.CreateArticleRequest(5L, "subject", "content", "user");
+
             given(loadUserPort.existsUser(any()))
                 .willReturn(true);
             var createdArticle = ArticleFixtures.article();
@@ -67,17 +76,39 @@ class ArticleServiceTest {
                 .isEqualTo(createdArticle);
         }
 
+        @ParameterizedTest(name = "{0}")
+        @MethodSource("invalidParameters")
+        @DisplayName("정상적이지 않은 param 이면 IllegalArgumentException")
+        void throwIllegalArgumentException(String name, String subject, String content, String username) {
+            var request = new ArticleDto.CreateArticleRequest(5L, subject, content, username);
+            given(loadUserPort.existsUser(any()))
+                .willReturn(true);
+            given(loadUserPort.existsUser(any()))
+                .willReturn(true);
+
+            thenThrownBy(() -> sut.createArticle(request))
+                .isInstanceOf(IllegalArgumentException.class);
+        }
+
         @Test
         @DisplayName("존재하지 않는 작성자이면 AccessDeniedException")
         void throwAccessDeniedException() {
-            var board = BoardFixtures.board();
-            given(loadBoardPort.findBoardById(any()))
-                .willReturn(Optional.of(board));
+            var request = new ArticleDto.CreateArticleRequest(5L, "subject", "content", "nouser");
             given(loadUserPort.existsUser(any()))
                 .willReturn(false);
 
             thenThrownBy(() -> sut.createArticle(request))
                 .isInstanceOf(AccessDeniedException.class);
+            }
+
+        static Stream<Arguments> invalidParameters() {
+            return Stream.of(
+                Arguments.of("subject null", null, "content", "user"),
+                Arguments.of("subject empty", "", "content", "user"),
+                Arguments.of("content null", "subject", null, "user"),
+                Arguments.of("content empty", "subject", "", "user"),
+                Arguments.of("username null", "subject", "content", null)
+            );
         }
     }
 

@@ -18,8 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
-class ArticleLoadServiceTest {
-    private ArticleLoadService sut;
+class GetArticleServiceTest {
+    private GetArticleService sut;
 
     private LoadArticlePort loadArticlePort;
 
@@ -27,7 +27,7 @@ class ArticleLoadServiceTest {
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
 
-        sut = new ArticleLoadService(loadArticlePort);
+        sut = new GetArticleService(loadArticlePort);
     }
 
     @Test

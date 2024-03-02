@@ -8,10 +8,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArticleLoadService implements GetArticleUseCase {
+public class GetArticleService implements GetArticleUseCase {
     private final LoadArticlePort loadArticlePort;
 
-    public ArticleLoadService(LoadArticlePort loadArticlePort) {
+    public GetArticleService(LoadArticlePort loadArticlePort) {
         this.loadArticlePort = loadArticlePort;
     }
 

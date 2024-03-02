@@ -13,11 +13,11 @@ import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.api.GlobalControllerAdvice;
+import com.example.demo.common.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -88,7 +88,7 @@ class ArticleControllerUnitTest {
         @DisplayName("articleId 에 해당하는 Article이 없으면 400 Not Found")
         void getArticle() throws Exception {
             given(getArticleUseCase.getArticleById(any()))
-                .willThrow(new NoSuchElementException("article not exists"));
+                .willThrow(new ResourceNotFoundException("article not exists"));
 
             Long articleId = 1L;
             mockMvc.perform(get("/articles/{articleId}", articleId))
