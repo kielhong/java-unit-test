@@ -19,10 +19,10 @@ import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.exception.AccessDeniedException;
+import com.example.demo.common.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -78,7 +78,7 @@ class ArticleControllerTest {
         @DisplayName("articleId 에 해당하는 Article이 없으면 400 Not Found")
         void notFound() throws Exception {
             given(getArticleUseCase.getArticleById(any()))
-                .willThrow(new NoSuchElementException("article not exists"));
+                .willThrow(new ResourceNotFoundException("article not exists"));
 
             mockMvc.perform(get("/articles/{articleId}", 1L))
                 .andDo(print())

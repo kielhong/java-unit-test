@@ -5,7 +5,7 @@ import com.example.demo.article.application.port.in.CreateArticleUseCase;
 import com.example.demo.article.application.port.in.DeleteArticleUseCase;
 import com.example.demo.article.application.port.in.GetArticleUseCase;
 import com.example.demo.article.application.port.in.ModifyArticleUseCase;
-import com.example.demo.common.web.dto.CommandResponse;
+import com.example.demo.common.api.dto.CommandResponse;
 import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
