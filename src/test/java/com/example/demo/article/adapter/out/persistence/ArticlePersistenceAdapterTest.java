@@ -20,10 +20,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+@ExtendWith(MockitoExtension.class)
 class ArticlePersistenceAdapterTest {
     private ArticlePersistenceAdapter adapter;
 
@@ -75,6 +79,9 @@ class ArticlePersistenceAdapterTest {
     @Nested
     @DisplayName("Article 생성")
     class CreateArticle {
+        @Captor
+        ArgumentCaptor<ArticleJpaEntity> captor;
+
         private final Article article = new Article(null, new Board(5L, "board"), "subject", "content", "user", LocalDateTime.now());
 
         @Test
@@ -100,7 +107,6 @@ class ArticlePersistenceAdapterTest {
         @Test
         @DisplayName("argumentCapture 검증")
         void createArticle_verifySaveArg() {
-            ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
             var boardJpaEntity = BoardJpaEntityFixtures.board();
             var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "subject", "content", "user",
                 LocalDateTime.parse("2023-02-10T11:12:33"));
@@ -110,8 +116,8 @@ class ArticlePersistenceAdapterTest {
 
             adapter.createArticle(article);
 
-            verify(articleRepository).save(argumentCaptor.capture());
-            then(argumentCaptor.getValue())
+            verify(articleRepository).save(captor.capture());
+            then(captor.getValue())
                 .hasFieldOrPropertyWithValue("id", null)
                 .hasFieldOrPropertyWithValue("board.id", 5L)
                 .hasFieldOrPropertyWithValue("subject", "subject")

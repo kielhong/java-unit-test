@@ -9,7 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @Sql("/data/ArticleRepositoryFixtureTest.sql")
-class ArticleRepositoryFixtureTest {
+class Ch4Clip02ArticleRepositoryFixtureTest {
     @Autowired
     private ArticleRepository repository;
 

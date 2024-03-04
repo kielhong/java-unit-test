@@ -18,15 +18,17 @@
  
 ```text
 aggregate
-    ├── domain           # 도메인
+    ├── domain                      # 도메인
     ├── application
-    │    ├── service     # 제공하는 애플리케이션 서비스
+    │    ├── service                # 제공하는 애플리케이션 서비스
     │    └── port
-    │        ├── in      # 애플리케이션 서비스가 구현하는 인터페이스
-    │        └── out     # 애플리케이션 서비스가 의존하는 인터페이스
+    │        ├── in                 # 애플리케이션 서비스가 구현하는 인터페이스
+    │        └── out                # 애플리케이션 서비스가 의존하는 인터페이스
     └── adapter
-             ├── in      # incoming adapter 또는 애플리케이션 서비스를 의존하는 어댑터
-             └── out     # outgoing port의 구현체
+             ├── in                 # incoming adapter 또는 애플리케이션 서비스를 의존하는 어댑터
+             └── out                # outgoing port의 구현체
+                 ├── entity         # dbms의 persistent data entity
+                 └── repository     # dbms repository 인터페이스
 ```
 
 위 구조의 패키지는 하위 패키지를 가질 수 있으며, 패키지 구분에 대한 기준은 없습니다.
