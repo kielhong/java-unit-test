@@ -1,7 +1,10 @@
 package com.example.demo.article.domain;
 
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArticleFixtures {
     public static Article article(Long id) {
         var board = new Board(5L, "board");

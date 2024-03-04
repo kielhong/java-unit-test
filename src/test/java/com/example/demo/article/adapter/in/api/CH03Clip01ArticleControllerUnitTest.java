@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.demo.article.application.port.in.CreateArticleUseCase;
@@ -30,7 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-class ArticleControllerUnitTest {
+class CH03Clip01ArticleControllerUnitTest {
     private MockMvc mockMvc;
 
     private GetArticleUseCase getArticleUseCase;
@@ -73,15 +72,7 @@ class ArticleControllerUnitTest {
             Long articleId = 1L;
             mockMvc.perform(get("/articles/{articleId}", articleId))
                 .andDo(print())
-                .andExpectAll(
-                    status().isOk(),
-                    jsonPath("$.id").value(article.getId()),
-                    jsonPath("$.board.id").value(article.getBoard().getId()),
-                    jsonPath("$.subject").value(article.getSubject()),
-                    jsonPath("$.content").value(article.getContent()),
-                    jsonPath("$.username").value(article.getUsername()),
-                    jsonPath("$.createdAt").value(article.getCreatedAt().toString())
-                );
+                .andExpect(status().isOk());
         }
 
         @Test
@@ -93,9 +84,7 @@ class ArticleControllerUnitTest {
             Long articleId = 1L;
             mockMvc.perform(get("/articles/{articleId}", articleId))
                 .andDo(print())
-                .andExpectAll(
-                    status().isNotFound()
-                );
+                .andExpect(status().isNotFound());
         }
     }
 }

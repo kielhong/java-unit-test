@@ -2,9 +2,11 @@ package com.example.demo.article.application.service;
 
 import static org.mockito.ArgumentMatchers.any;
 
+import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
+import com.example.demo.article.application.port.out.LoadBoardPort;
+import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.ArticleFixtures;
-import com.example.demo.common.exception.ResourceNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.BDDAssertions;
@@ -14,24 +16,30 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
-class GetArticleServiceTest {
-    private GetArticleService sut;
+class Ch02Clip02JunitMockitoTest {
+    private ArticleService sut;
 
     private LoadArticlePort loadArticlePort;
+    private CommandArticlePort commandArticlePort;
+    private LoadBoardPort loadBoardPort;
+    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
+        commandArticlePort = Mockito.mock(CommandArticlePort.class);
+        loadBoardPort = Mockito.mock(LoadBoardPort.class);
+        loadUserPort = Mockito.mock(LoadUserPort.class);
 
-        sut = new GetArticleService(loadArticlePort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
     }
 
     @Test
     @DisplayName("articleId 로 조회시 Article 반환")
     void return_Article() {
         var article = ArticleFixtures.article();
-        BDDMockito.given(loadArticlePort.findArticleById(any()))
-            .willReturn(Optional.of(article));
+        Mockito.when(loadArticlePort.findArticleById(any()))
+            .thenReturn(Optional.of(article));
 
         var result = sut.getArticleById(1L);
 
@@ -46,17 +54,7 @@ class GetArticleServiceTest {
     }
 
     @Test
-    @DisplayName("Article 존재하지 않을 경우 ResourceNotFoundException throw")
-    void throw_ResourceNotFoundException() {
-        BDDMockito.given(loadArticlePort.findArticleById(any()))
-            .willReturn(Optional.empty());
-
-        BDDAssertions.thenThrownBy(() -> sut.getArticleById(1L))
-            .isInstanceOf(ResourceNotFoundException.class);
-    }
-
-    @Test
-    @DisplayName("Board의 Article 목록 조회")
+    @DisplayName("BDDStyle Board의 Article 목록 조회")
     void getArticlesByBoard_listArticles() {
         var article1 = ArticleFixtures.article(1L);
         var article2 = ArticleFixtures.article(2L);
@@ -68,5 +66,16 @@ class GetArticleServiceTest {
         BDDAssertions.then(result)
             .hasSize(2)
             .extracting("board.id").containsOnly(5L);
+    }
+
+    @Test
+    @DisplayName("Article 삭제")
+    void deleteArticle() {
+        BDDMockito.willDoNothing()
+            .given(commandArticlePort).deleteArticle(any());
+
+        sut.deleteArticle(1L);
+
+        Mockito.verify(commandArticlePort).deleteArticle(1L);
     }
 }

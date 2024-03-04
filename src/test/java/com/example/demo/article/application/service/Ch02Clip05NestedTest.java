@@ -5,7 +5,10 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
+import com.example.demo.article.application.port.out.LoadBoardPort;
+import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.exception.ResourceNotFoundException;
 import java.util.Optional;
@@ -15,20 +18,59 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class GetArticleServiceNestedTest {
-    private GetArticleService sut;
+class Ch02Clip05NestedTest {
+    private ArticleService sut;
 
     private LoadArticlePort loadArticlePort;
+    private CommandArticlePort commandArticlePort;
+    private LoadBoardPort loadBoardPort;
+    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
+        commandArticlePort = Mockito.mock(CommandArticlePort.class);
+        loadBoardPort = Mockito.mock(LoadBoardPort.class);
+        loadUserPort = Mockito.mock(LoadUserPort.class);
 
-        sut = new GetArticleService(loadArticlePort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
+    }
+
+    @Test
+    @DisplayName("articleId 로 조회시 Article 반환")
+    void return_Article() {
+        // given
+        var article = ArticleFixtures.article();
+        given(loadArticlePort.findArticleById(Mockito.anyLong()))
+            .willReturn(Optional.of(article));
+
+        // when
+        var result = sut.getArticleById(1L);
+
+        // then
+        then(result)
+            .isNotNull()
+            .hasNoNullFieldsOrProperties()
+            .hasFieldOrPropertyWithValue("id", article.getId())
+            .hasFieldOrPropertyWithValue("board.id", article.getBoard().getId())
+            .hasFieldOrPropertyWithValue("subject", article.getSubject())
+            .hasFieldOrPropertyWithValue("content", article.getContent())
+            .hasFieldOrPropertyWithValue("username", article.getUsername())
+            .hasFieldOrProperty("createdAt");
+    }
+
+    @Test
+    @DisplayName("Article 존재하지 않을 경우 ResourceNotFoundException throw")
+    void throw_ResourceNotFoundException() {
+        given(loadArticlePort.findArticleById(any()))
+            .willReturn(Optional.empty());
+
+        thenThrownBy(() -> sut.getArticleById(1L))
+            .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Nested
-    @DisplayName("Article 한 개 조회")
+    @DisplayName("Article 조회")
     class GetArticle {
         @Test
         @DisplayName("articleId 로 조회시 Article 반환")
