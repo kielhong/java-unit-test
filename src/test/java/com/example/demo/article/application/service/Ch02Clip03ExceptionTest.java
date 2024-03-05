@@ -8,10 +8,8 @@ import com.example.demo.article.adapter.in.api.dto.ArticleDto;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
-import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.Board;
 import com.example.demo.article.domain.BoardFixtures;
-import com.example.demo.common.exception.AccessDeniedException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,14 +28,12 @@ class Ch02Clip03ExceptionTest {
     private CommandArticlePort commandArticlePort;
     @Mock(strictness = Mock.Strictness.LENIENT)
     private LoadBoardPort loadBoardPort;
-    @Mock
-    private LoadUserPort loadUserPort;
 
     private final Board board = BoardFixtures.board();
 
     @BeforeEach
     void setUp() {
-        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @Test
@@ -50,16 +46,5 @@ class Ch02Clip03ExceptionTest {
         thenThrownBy(() -> sut.createArticle(request))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("subject should not empty");
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 작성자이면 AccessDeniedException")
-    void throwAccessDeniedException() {
-        var request = new ArticleDto.CreateArticleRequest(5L, "subject", "content", "nouser");
-        given(loadUserPort.existsUser(any()))
-            .willReturn(false);
-
-        thenThrownBy(() -> sut.createArticle(request))
-            .isInstanceOf(AccessDeniedException.class);
     }
 }

@@ -12,7 +12,6 @@ import com.example.demo.article.adapter.in.api.dto.BoardDto;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
-import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.domain.Board;
@@ -45,12 +44,10 @@ class ArticleServiceTest {
     private CommandArticlePort commandArticlePort;
     @Mock
     private LoadBoardPort loadBoardPort;
-    @Mock
-    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
-        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @Nested
@@ -112,8 +109,6 @@ class ArticleServiceTest {
             var board = BoardFixtures.board();
             given(loadBoardPort.findBoardById(any()))
                 .willReturn(Optional.of(board));
-            given(loadUserPort.existsUser(any()))
-                .willReturn(true);
             var createdArticle = ArticleFixtures.article();
             given(commandArticlePort.createArticle(any()))
                 .willReturn(createdArticle);
@@ -133,17 +128,6 @@ class ArticleServiceTest {
             thenThrownBy(() -> sut.createArticle(request))
                 .isInstanceOf(IllegalArgumentException.class);
         }
-
-        @Test
-        @DisplayName("존재하지 않는 작성자이면 AccessDeniedException")
-        void throwAccessDeniedException() {
-            var request = new ArticleDto.CreateArticleRequest(5L, "subject", "content", "nouser");
-            given(loadUserPort.existsUser(any()))
-                .willReturn(false);
-
-            thenThrownBy(() -> sut.createArticle(request))
-                .isInstanceOf(AccessDeniedException.class);
-            }
 
         static Stream<Arguments> invalidParameters() {
             return Stream.of(

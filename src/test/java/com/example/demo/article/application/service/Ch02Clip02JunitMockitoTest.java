@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
-import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.ArticleFixtures;
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +21,14 @@ class Ch02Clip02JunitMockitoTest {
     private LoadArticlePort loadArticlePort;
     private CommandArticlePort commandArticlePort;
     private LoadBoardPort loadBoardPort;
-    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
         commandArticlePort = Mockito.mock(CommandArticlePort.class);
         loadBoardPort = Mockito.mock(LoadBoardPort.class);
-        loadUserPort = Mockito.mock(LoadUserPort.class);
 
-        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @Test

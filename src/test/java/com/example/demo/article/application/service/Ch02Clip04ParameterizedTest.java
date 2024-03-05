@@ -9,7 +9,6 @@ import com.example.demo.article.adapter.in.api.dto.ArticleDto;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
-import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.article.domain.BoardFixtures;
 import java.util.Optional;
@@ -35,12 +34,10 @@ class Ch02Clip04ParameterizedTest {
     private CommandArticlePort commandArticlePort;
     @Mock
     private LoadBoardPort loadBoardPort;
-    @Mock
-    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
-        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @ParameterizedTest
@@ -51,8 +48,6 @@ class Ch02Clip04ParameterizedTest {
         var board = BoardFixtures.board();
         given(loadBoardPort.findBoardById(any()))
             .willReturn(Optional.of(board));
-        given(loadUserPort.existsUser(any()))
-            .willReturn(true);
         var createdArticle = ArticleFixtures.article();
         given(commandArticlePort.createArticle(any()))
             .willReturn(createdArticle);
