@@ -61,7 +61,8 @@ class ArticleControllerTest {
             given(getArticleUseCase.getArticleById(any()))
                 .willReturn(article);
 
-            mockMvc.perform(get("/articles/{articleId}", 1L))
+            mockMvc
+                .perform(get("/articles/{articleId}", 1L))
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
@@ -80,7 +81,8 @@ class ArticleControllerTest {
             given(getArticleUseCase.getArticleById(any()))
                 .willThrow(new ResourceNotFoundException("article not exists"));
 
-            mockMvc.perform(get("/articles/{articleId}", 1L))
+            mockMvc
+                .perform(get("/articles/{articleId}", 1L))
                 .andDo(print())
                 .andExpectAll(
                     status().isNotFound()
@@ -94,7 +96,8 @@ class ArticleControllerTest {
         given(getArticleUseCase.getArticlesByBoard(any()))
             .willReturn(List.of(ArticleFixtures.article(1L), ArticleFixtures.article(2L)));
 
-        mockMvc.perform(get("/articles?boardId={boardId}", 5L))
+        mockMvc
+            .perform(get("/articles?boardId={boardId}", 5L))
             .andDo(print())
             .andExpectAll(
                 status().isOk(),

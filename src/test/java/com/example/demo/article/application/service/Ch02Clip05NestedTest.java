@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.given;
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
-import com.example.demo.article.application.port.out.LoadUserPort;
 import com.example.demo.article.domain.ArticleFixtures;
 import com.example.demo.common.exception.ResourceNotFoundException;
 import java.util.Optional;
@@ -24,16 +23,14 @@ class Ch02Clip05NestedTest {
     private LoadArticlePort loadArticlePort;
     private CommandArticlePort commandArticlePort;
     private LoadBoardPort loadBoardPort;
-    private LoadUserPort loadUserPort;
 
     @BeforeEach
     void setUp() {
         loadArticlePort = Mockito.mock(LoadArticlePort.class);
         commandArticlePort = Mockito.mock(CommandArticlePort.class);
         loadBoardPort = Mockito.mock(LoadBoardPort.class);
-        loadUserPort = Mockito.mock(LoadUserPort.class);
 
-        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort, loadUserPort);
+        sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
     @Test
