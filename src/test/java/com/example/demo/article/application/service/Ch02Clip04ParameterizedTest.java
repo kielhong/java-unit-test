@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,11 +59,10 @@ class Ch02Clip04ParameterizedTest {
             .isEqualTo(createdArticle);
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("invalidParameters")
-    @DisplayName("정상적이지 않은 param 이면 IllegalArgumentException")
-    void methodSource_throwIllegalArgumentException(String name, String subject, String content, String username) {
-        var request = new ArticleDto.CreateArticleRequest(5L, subject, content, username);
+    @ParameterizedTest
+    @NullAndEmptySource
+    void isEmpty_throwIllegalArgumentException(String subject) {
+        var request = new ArticleDto.CreateArticleRequest(5L, subject, "content", "user");
 
         thenThrownBy(() -> sut.createArticle(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -82,13 +82,23 @@ class Ch02Clip04ParameterizedTest {
             .isEqualTo(a + b);
     }
 
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("invalidParameters")
+    @DisplayName("정상적이지 않은 param 이면 IllegalArgumentException")
+    void methodSource_throwIllegalArgumentException(String name, String subject, String content, String username) {
+        var request = new ArticleDto.CreateArticleRequest(5L, subject, content, username);
+
+        thenThrownBy(() -> sut.createArticle(request))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
     static Stream<Arguments> invalidParameters() {
         return Stream.of(
-            Arguments.of("subject null", null, "content", "user"),
-            Arguments.of("subject empty", "", "content", "user"),
-            Arguments.of("content null", "subject", null, "user"),
-            Arguments.of("content empty", "subject", "", "user"),
-            Arguments.of("username null", "subject", "content", null)
+            Arguments.of("subject is null", null, "content", "user"),
+            Arguments.of("subject is empty", "", "content", "user"),
+            Arguments.of("content is null", "subject", null, "user"),
+            Arguments.of("content is empty", "subject", "", "user"),
+            Arguments.of("username is null", "subject", "content", null)
         );
     }
 }
