@@ -31,7 +31,7 @@ article
     │        │   ├── GetArticleUseCase.java
     │        │   ├── GetBoardUseCase.java
     │        │   └── ModifyArticleUseCase.java
-    │        └── out                     # outgoing port. 애플리케이션 서비스가 의존하는 인터페이스
+    │        └── out
     │            ├── CommandArticlePort.java
     │            ├── LoadArticlePort.java
     │            └── LoadBoardPort.java
@@ -45,7 +45,7 @@ article
                        ├── entity
                        │    ├── ArticleJpaEntity.java
                        │    └── BoardJpaEntity.java
-                       └── repository     # dbms repository 인터페이스
+                       └── repository
                             ├── ArticleRepository.java
                             └── BoardRepository.java
 ```
