@@ -29,7 +29,6 @@ article
     │        │   ├── CreateArticleUseCase.java
     │        │   ├── DeleteArticleUseCase.java
     │        │   ├── GetArticleUseCase.java
-    │        │   ├── GetBoardUseCase.java
     │        │   └── ModifyArticleUseCase.java
     │        └── out
     │            ├── CommandArticlePort.java
