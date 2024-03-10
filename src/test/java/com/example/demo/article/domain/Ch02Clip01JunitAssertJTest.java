@@ -29,8 +29,11 @@ class Ch02Clip01JunitAssertJTest {
         article.update("new subject", "new content");
 
         // Assert
-        Assertions.assertThat(article)
+        Assertions.assertThat(article.getId())
             .isNotNull()
+            .isEqualTo(1L)
+            .isGreaterThan(0L);
+        Assertions.assertThat(article)
             .hasNoNullFieldsOrProperties()
             .hasFieldOrPropertyWithValue("id", 1L)
             .hasFieldOrPropertyWithValue("board.id", 5L)
@@ -47,7 +50,6 @@ class Ch02Clip01JunitAssertJTest {
 
         // Then
         BDDAssertions.then(article)
-            .isNotNull()
             .hasNoNullFieldsOrProperties()
             .hasFieldOrPropertyWithValue("id", 1L)
             .hasFieldOrPropertyWithValue("board.id", 5L)

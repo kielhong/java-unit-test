@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class ArticleTest {
     @Test
-    @DisplayName("Article 생성")
+    @DisplayName("Article constructor")
     void constructArticle() {
         var board = new Board(5L, "board");
 
@@ -52,6 +52,7 @@ class ArticleTest {
             .isNotNull()
             .hasNoNullFieldsOrProperties()
             .hasFieldOrPropertyWithValue("id", 1L)
+            .hasFieldOrPropertyWithValue("board.id", 5L)
             .hasFieldOrPropertyWithValue("subject", "new subject")
             .hasFieldOrPropertyWithValue("content", "new content");
     }
