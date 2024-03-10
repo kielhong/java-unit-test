@@ -1,5 +1,6 @@
-package com.example.demo.article.application.service;
+package com.example.demo.article.domain;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -12,38 +13,37 @@ import org.junit.jupiter.api.Test;
 class Ch02Clip01JunitTest {
     @BeforeAll
     static void initAll() {
-        System.out.println("BeforeAll");
+        System.out.println("Before All");
     }
 
     @BeforeEach
     void setUp() {
-        System.out.println("BeforeEach");
+        System.out.println("Before Each");
     }
 
     @Test
-    @DisplayName("성공 테스트")
-    void succeedingTest() {
+    @DisplayName("Article 생성 - 성공 테스트")
+    void constructArticle() {
         // Arrange (준비)
-        String string1 = "Junit";
-        String string2 = "Junit";
-        String string3 = "test";
-        String string4 = null;
-        int number1 = 1;
-        int	number2 = 2;
-        int[] array1 = { 1, 2, 3 };
-        int[] array2 = { 1, 2, 3 };
+        var board = new Board(5L, "board");
 
         // Act (실행)
-        int result = number1 + number2;
+        var article = Article.builder()
+            .id(1L)
+            .board(board)
+            .subject("subject")
+            .content("content")
+            .username("user")
+            .createdAt(LocalDateTime.now())
+            .build();
 
         // Assert (검증)
-        Assertions.assertEquals(3, result);
-        Assertions.assertTrue(number1 < number2);
-        Assertions.assertEquals(string1, string2);
-        Assertions.assertNotEquals(string1, string3);
-        Assertions.assertNotNull(string1);
-        Assertions.assertNull(string4);
-        Assertions.assertArrayEquals(array1, array2);
+        Assertions.assertEquals(1L, article.getId());
+        Assertions.assertTrue(article.getBoard().equals(board));
+        Assertions.assertEquals("subject", article.getSubject());
+        Assertions.assertEquals("content", article.getContent());
+        Assertions.assertNotEquals("subject2", article.getSubject());
+        Assertions.assertNotNull(article.getCreatedAt());
 
         System.out.println("succeedingTest");
     }
@@ -80,11 +80,11 @@ class Ch02Clip01JunitTest {
 
     @AfterEach
     void tearDown() {
-        System.out.println("AfterEach");
+        System.out.println("After Each");
     }
 
     @AfterAll
     static void tearDownAll() {
-        System.out.println("AfterAll");
+        System.out.println("After All");
     }
 }

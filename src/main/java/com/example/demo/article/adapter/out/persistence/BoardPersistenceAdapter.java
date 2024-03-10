@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BoardPersistenceAdapter implements LoadBoardPort {
-    private BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     public BoardPersistenceAdapter(BoardRepository boardRepository) {
         this.boardRepository = boardRepository;
