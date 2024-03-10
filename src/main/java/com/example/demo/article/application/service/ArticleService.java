@@ -65,7 +65,7 @@ public class ArticleService implements GetArticleUseCase, CreateArticleUseCase, 
             throw new AccessDeniedException("");
         }
 
-        article.update(request);
+        article.update(request.subject(), request.content());
         return commandArticlePort.modifyArticle(article);
     }
 
