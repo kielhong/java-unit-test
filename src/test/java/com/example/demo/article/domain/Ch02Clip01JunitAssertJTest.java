@@ -26,6 +26,7 @@ class Ch02Clip01JunitAssertJTest {
     @Test
     @DisplayName("updateArticle - AssertJ Assertion")
     void updateArticle() {
+        // Act
         article.update("new subject", "new content");
 
         // Assert

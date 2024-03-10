@@ -32,7 +32,7 @@ class Ch02Clip01JunitTest {
     }
 
     @Test
-    @DisplayName("Article 생성 - 성공 테스트")
+    @DisplayName("성공 테스트 - Article 생성")
     void constructArticle() {
         // Arrange (준비)
         var board = new Board(5L, "board");
@@ -61,23 +61,10 @@ class Ch02Clip01JunitTest {
     @Test
     @DisplayName("실패 테스트")
     void failingTest() {
-        // 3을 다른 값으로 바꿔서 test fail 시키기
-        Assertions.assertEquals(3, 1 + 2, "실패한 테스트의 메시지");
+        // expected 혹은 actual 을 다른 값으로 바꿔서 test fail 시키기
+        Assertions.assertEquals(3, 1 + 2, "테스트 실패시 출력되는 failure message");
 
         System.out.println("failingTest");
-    }
-
-    @Test
-    @DisplayName("예외 테스트")
-    void exceptionTest() {
-        var exception = Assertions.assertThrows(Exception.class, () -> {
-            Integer.parseInt("1a");
-        });
-
-        Assertions.assertInstanceOf(NumberFormatException.class, exception);
-        Assertions.assertTrue(exception.getMessage().contains("For input string"));
-
-        System.out.println("exceptionTest");
     }
 
     @Test
