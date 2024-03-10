@@ -70,14 +70,12 @@ class Ch02Clip01JunitTest {
     @Test
     @DisplayName("예외 테스트")
     void exceptionTest() {
-        var exception = Assertions.assertThrows(NumberFormatException.class, () -> {
+        var exception = Assertions.assertThrows(Exception.class, () -> {
             Integer.parseInt("1a");
         });
 
-        var expectedMessage = "For input string";
-        var actualMessage = exception.getMessage();
-
-        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+        Assertions.assertInstanceOf(NumberFormatException.class, exception);
+        Assertions.assertTrue(exception.getMessage().contains("For input string"));
 
         System.out.println("exceptionTest");
     }
