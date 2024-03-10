@@ -13,12 +13,22 @@ import org.junit.jupiter.api.Test;
 class Ch02Clip01JunitTest {
     @BeforeAll
     static void initAll() {
-        System.out.println("Before All");
+        System.out.println("Before All\n");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        System.out.println("After All");
     }
 
     @BeforeEach
     void setUp() {
         System.out.println("Before Each");
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("After Each\n");
     }
 
     @Test
@@ -68,6 +78,8 @@ class Ch02Clip01JunitTest {
         var actualMessage = exception.getMessage();
 
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
+
+        System.out.println("exceptionTest");
     }
 
     @Test
@@ -76,15 +88,5 @@ class Ch02Clip01JunitTest {
         System.out.println("DisabledTest");
 
         Assertions.assertEquals(3, 1 + 2);
-    }
-
-    @AfterEach
-    void tearDown() {
-        System.out.println("After Each");
-    }
-
-    @AfterAll
-    static void tearDownAll() {
-        System.out.println("After All");
     }
 }

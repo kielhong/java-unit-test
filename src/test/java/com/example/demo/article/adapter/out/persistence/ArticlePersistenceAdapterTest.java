@@ -82,7 +82,13 @@ class ArticlePersistenceAdapterTest {
         @Captor
         ArgumentCaptor<ArticleJpaEntity> captor;
 
-        private final Article article = new Article(null, new Board(5L, "board"), "subject", "content", "user", LocalDateTime.now());
+        private final Article article = Article.builder()
+            .board(new Board(5L, "board"))
+            .subject("subject")
+            .content("content")
+            .username("user")
+            .createdAt(LocalDateTime.now())
+            .build();
 
         @Test
         @DisplayName("응답값 검증")
@@ -131,7 +137,14 @@ class ArticlePersistenceAdapterTest {
     void modifyArticle() {
         ArgumentCaptor<ArticleJpaEntity> argumentCaptor = ArgumentCaptor.forClass(ArticleJpaEntity.class);
 
-        final Article article = new Article(1L, new Board(6L, "new board"), "new subject", "new content", "new user", LocalDateTime.now());
+        final Article article = Article.builder()
+            .id(1L)
+            .board(new Board(6L, "new board"))
+            .subject("new subject")
+            .content("new content")
+            .username("new user")
+            .createdAt(LocalDateTime.now())
+            .build();
         var boardJpaEntity = new BoardJpaEntity("new board");
         ReflectionTestUtils.setField(boardJpaEntity, "id", 6L);
         var articleJpaEntity = new ArticleJpaEntity(boardJpaEntity, "new subject", "new content", "new user",

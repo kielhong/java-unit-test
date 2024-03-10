@@ -14,14 +14,14 @@ public class Article {
     private String username;
     private LocalDateTime createdAt;
 
-    public Article(Long id, Board board, String subject, String content, String username, LocalDateTime createdAt) {
-        this.id = id;
-        this.board = board;
-        this.subject = subject;
-        this.content = content;
-        this.username = username;
-        this.createdAt = createdAt;
-    }
+//    public Article(Long id, Board board, String subject, String content, String username, LocalDateTime createdAt) {
+//        this.id = id;
+//        this.board = board;
+//        this.subject = subject;
+//        this.content = content;
+//        this.username = username;
+//        this.createdAt = createdAt;
+//    }
 
     public void update(String subject, String content) {
         this.subject = subject;
