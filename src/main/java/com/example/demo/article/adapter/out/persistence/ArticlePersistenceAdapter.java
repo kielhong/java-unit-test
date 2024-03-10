@@ -6,6 +6,7 @@ import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.domain.Article;
 import com.example.demo.article.domain.Board;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,31 @@ public class ArticlePersistenceAdapter implements LoadArticlePort, CommandArticl
     @Override
     public Optional<Article> findArticleById(Long articleId) {
         return articleRepository.findById(articleId)
-            .map(article -> new Article(article.getId(), new Board(article.getBoard().getId(), article.getBoard().getName()), article.getSubject(), article.getContent(), article.getUsername(), article.getCreatedAt()));
+            .map(article ->
+                Article.builder()
+                    .id(article.getId())
+                    .board(new Board(article.getBoard().getId(), article.getBoard().getName()))
+                    .subject(article.getSubject())
+                    .content(article.getContent())
+                    .username(article.getUsername())
+                    .createdAt(article.getCreatedAt())
+                    .build()
+            );
     }
 
     @Override
     public List<Article> findArticlesByBoardId(Long boardId) {
         return articleRepository.findByBoardId(boardId).stream()
-            .map(article -> new Article(article.getId(), new Board(article.getBoard().getId(), article.getBoard().getName()), article.getSubject(), article.getContent(), article.getUsername(), article.getCreatedAt()))
+            .map(article ->
+                Article.builder()
+                    .id(article.getId())
+                    .board(new Board(article.getBoard().getId(), article.getBoard().getName()))
+                    .subject(article.getSubject())
+                    .content(article.getContent())
+                    .username(article.getUsername())
+                    .createdAt(article.getCreatedAt())
+                    .build()
+            )
             .toList();
     }
 

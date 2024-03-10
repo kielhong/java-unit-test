@@ -56,14 +56,14 @@ public class ArticleJpaEntity {
     }
 
     public Article toDomain() {
-        return new Article(
-            this.id,
-            this.board.toDomain(),
-            this.subject,
-            this.content,
-            this.username,
-            this.createdAt
-        );
+        return Article.builder()
+            .id(this.id)
+            .board(this.board.toDomain())
+            .subject(this.subject)
+            .content(this.content)
+            .username(this.username)
+            .createdAt(this.createdAt)
+            .build();
     }
 
     public static ArticleJpaEntity fromDomain(Article article) {

@@ -159,7 +159,14 @@ class ArticleServiceTest {
 
             given(loadArticlePort.findArticleById(any()))
                 .willReturn(Optional.of(article));
-            var modifiedArticle = new Article(article.getId(), board, "new subject", "new content", article.getUsername(), article.getCreatedAt());
+            var modifiedArticle = Article.builder()
+                .id(article.getId())
+                .board(board)
+                .subject("new subject")
+                .content("new content")
+                .username(article.getUsername())
+                .createdAt(article.getCreatedAt())
+                .build();
             given(commandArticlePort.modifyArticle(any()))
                 .willReturn(modifiedArticle);
 

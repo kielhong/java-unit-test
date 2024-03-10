@@ -9,6 +9,7 @@ import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.Article;
+import com.example.demo.article.domain.Board;
 import com.example.demo.common.exception.AccessDeniedException;
 import com.example.demo.common.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;
@@ -51,8 +52,14 @@ public class ArticleService implements GetArticleUseCase, CreateArticleUseCase, 
 
         var board = loadBoardPort.findBoardById(request.boardId())
             .orElseThrow();
+        var article = Article.builder()
+            .board(board)
+            .subject(request.subject())
+            .content(request.content())
+            .username(request.username())
+            .createdAt(LocalDateTime.now())
+            .build();
 
-        var article = new Article(null, board, request.subject(), request.content(), request.username(), LocalDateTime.now());
         return commandArticlePort.createArticle(article);
     }
 
