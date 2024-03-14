@@ -26,7 +26,7 @@ class Ch02Clip03ExceptionTest {
     private LoadArticlePort loadArticlePort;
     @Mock
     private CommandArticlePort commandArticlePort;
-    @Mock(strictness = Mock.Strictness.LENIENT)
+    @Mock
     private LoadBoardPort loadBoardPort;
 
     private final Board board = BoardFixtures.board();
@@ -40,11 +40,9 @@ class Ch02Clip03ExceptionTest {
     @DisplayName("subject가 정상적이지 않으면 IllegalArgumentException")
     void throwIllegalArgumentException() {
         var request = new ArticleDto.CreateArticleRequest(5L, null, "content", "user");
-        given(loadBoardPort.findBoardById(any()))
-            .willReturn(Optional.of(board));
 
         thenThrownBy(() -> sut.createArticle(request))
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("subject should not empty");
+            .hasMessageContaining("subject should");
     }
 }

@@ -200,14 +200,18 @@ class ArticleServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("Article 삭제")
-    void deleteArticle() {
-        willDoNothing()
-            .given(commandArticlePort).deleteArticle(any());
+    @Nested
+    class DeleteArticle {
+        @Test
+        @DisplayName("Article 삭제")
+        void deleteArticle() {
+            willDoNothing()
+                .given(commandArticlePort).deleteArticle(any());
 
-        sut.deleteArticle(1L);
+            sut.deleteArticle(1L);
 
-        verify(commandArticlePort).deleteArticle(1L);
+            verify(commandArticlePort).deleteArticle(1L);
+        }
     }
+
 }

@@ -62,7 +62,7 @@ class Ch02Clip01JunitTest {
     @DisplayName("실패 테스트")
     void failingTest() {
         // expected 혹은 actual 을 다른 값으로 바꿔서 test fail 시키기
-        Assertions.assertEquals(3, 1 + 2, "테스트 실패시 출력되는 failure message");
+        Assertions.assertEquals(4, 2 + 2, "테스트 실패시 출력되는 failure message");
 
         System.out.println("failingTest");
     }

@@ -1,6 +1,8 @@
 package com.example.demo.article.application.service;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
@@ -8,7 +10,6 @@ import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.ArticleFixtures;
 import java.util.List;
 import java.util.Optional;
-import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class Ch02Clip02JunitMockitoTest {
 
         var result = sut.getArticleById(1L);
 
-        BDDAssertions.then(result)
+        then(result)
             .isNotNull()
             .hasFieldOrPropertyWithValue("id", article.getId())
             .hasFieldOrPropertyWithValue("board.id", article.getBoard().getId())
@@ -60,7 +61,7 @@ class Ch02Clip02JunitMockitoTest {
 
         var result = sut.getArticlesByBoard(5L);
 
-        BDDAssertions.then(result)
+        then(result)
             .hasSize(2)
             .extracting("board.id").containsOnly(5L);
     }
@@ -73,6 +74,6 @@ class Ch02Clip02JunitMockitoTest {
 
         sut.deleteArticle(1L);
 
-        Mockito.verify(commandArticlePort).deleteArticle(1L);
+        verify(commandArticlePort).deleteArticle(1L);
     }
 }

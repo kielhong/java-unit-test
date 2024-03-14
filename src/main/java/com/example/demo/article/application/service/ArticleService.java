@@ -9,7 +9,6 @@ import com.example.demo.article.application.port.out.CommandArticlePort;
 import com.example.demo.article.application.port.out.LoadArticlePort;
 import com.example.demo.article.application.port.out.LoadBoardPort;
 import com.example.demo.article.domain.Article;
-import com.example.demo.article.domain.Board;
 import com.example.demo.common.exception.AccessDeniedException;
 import com.example.demo.common.exception.ResourceNotFoundException;
 import java.time.LocalDateTime;

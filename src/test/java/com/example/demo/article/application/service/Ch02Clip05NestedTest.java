@@ -15,21 +15,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class Ch02Clip05NestedTest {
     private ArticleService sut;
 
+    @Mock
     private LoadArticlePort loadArticlePort;
+    @Mock
     private CommandArticlePort commandArticlePort;
+    @Mock
     private LoadBoardPort loadBoardPort;
 
     @BeforeEach
     void setUp() {
-        loadArticlePort = Mockito.mock(LoadArticlePort.class);
-        commandArticlePort = Mockito.mock(CommandArticlePort.class);
-        loadBoardPort = Mockito.mock(LoadBoardPort.class);
-
         sut = new ArticleService(loadArticlePort, commandArticlePort, loadBoardPort);
     }
 
