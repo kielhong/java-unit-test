@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @AutoConfigureMockMvc   // for MockMvc
-@Transactional          // for data.sql
+@Transactional          // for DB data
 @Sql("/com/example/demo/article/in/api/ArticleControllerIntTest.sql")   // default value : same package, same class name
 class ArticleControllerIntTest {
     @Autowired
