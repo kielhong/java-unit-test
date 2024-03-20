@@ -4,6 +4,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,17 +44,20 @@ class ArticleControllerIntTest {
         void returnArticle() throws Exception {
             mockMvc
                 .perform(get("/articles/{articleId}", 1L))
+                .andDo(print())
                 .andExpectAll(
                     status().isOk(),
-                    jsonPath("$.id").value(1L)
+                    jsonPath("$.id").value(1L),
+                    jsonPath("$.subject").value("subject1")
                 );
         }
 
         @Test
         @DisplayName("Article 없으면 404 NotFound")
-        void badRequest() throws Exception {
+        void notFound() throws Exception {
             mockMvc
                 .perform(get("/articles/{articleId}", 10L))
+                .andDo(print())
                 .andExpect(
                     status().isNotFound()
                 );
@@ -75,6 +79,7 @@ class ArticleControllerIntTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)
                 )
+                .andDo(print())
                 .andExpectAll(
                     status().isOk(),
                     content().contentType(MediaType.APPLICATION_JSON),
@@ -92,16 +97,21 @@ class ArticleControllerIntTest {
         @Test
         @DisplayName("Article 삭제 200 OK, DB에서 제거됨")
         void createArticle() throws Exception {
+            var articleId = 1L;
+            var count = articleRepository.count();
             mockMvc
                 .perform(
-                    delete("/articles/{articleId}", 1L)
+                    delete("/articles/{articleId}", articleId)
                 )
+                .andDo(print())
                 .andExpectAll(
                     status().isOk()
                 );
 
-            then(articleRepository.findById(1L))
+            then(articleRepository.findById(articleId))
                 .isNotPresent();
+            then(articleRepository.count())
+                .isEqualTo(count - 1);
         }
     }
 }

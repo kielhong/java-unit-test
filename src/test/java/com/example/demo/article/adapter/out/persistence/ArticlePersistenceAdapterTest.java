@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -31,12 +32,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 class ArticlePersistenceAdapterTest {
     private ArticlePersistenceAdapter adapter;
 
+    @Mock
     private ArticleRepository articleRepository;
 
     @BeforeEach
     void setUp() {
-        articleRepository = Mockito.mock(ArticleRepository.class);
-
         adapter = new ArticlePersistenceAdapter(articleRepository);
     }
 
@@ -60,6 +60,19 @@ class ArticlePersistenceAdapterTest {
                     .hasFieldOrPropertyWithValue("createdAt", articleJpaEntity.getCreatedAt())
             );
     }
+
+    @Test
+    @DisplayName("articleId로 Article 조회시 값이 없음")
+    void given_articleId_when_getById_then_return_empty() {
+        given(articleRepository.findById(any()))
+            .willReturn(Optional.empty());
+
+        var result = adapter.findArticleById(1L);
+
+        then(result)
+            .isNotPresent();
+    }
+
 
     @Test
     @DisplayName("boardId 에 속한 Article list 반환")

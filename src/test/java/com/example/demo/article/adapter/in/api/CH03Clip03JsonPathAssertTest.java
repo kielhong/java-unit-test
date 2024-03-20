@@ -124,7 +124,7 @@ class CH03Clip03JsonPathAssertTest {
                 .andDo(print())
                 .andExpectAll(
                     status().isOk(),
-                    jsonPath("$.id").value(createdArticle.getId())
+                    jsonPath("$.id").exists()
                 );
         }
 

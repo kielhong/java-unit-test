@@ -28,12 +28,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 class CH03Clip01ArticleControllerUnitTest {
     private MockMvc mockMvc;
@@ -60,7 +58,7 @@ class CH03Clip01ArticleControllerUnitTest {
             .standaloneSetup(new ArticleController(getArticleUseCase, createArticleUseCase, modifyArticleUseCase, deleteArticleUseCase))
             .alwaysDo(print())
             .setControllerAdvice(new GlobalControllerAdvice())
-            .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper), new ResourceHttpMessageConverter())
+            .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
             .build();
     }
 
@@ -75,13 +73,14 @@ class CH03Clip01ArticleControllerUnitTest {
                 .willReturn(article);
 
             Long articleId = 1L;
-            mockMvc.perform(get("/articles/{articleId}", articleId))
+            mockMvc
+                .perform(get("/articles/{articleId}", articleId))
                 .andExpect(status().isOk());
         }
 
         @Test
         @DisplayName("articleId 에 해당하는 Article이 없으면 400 Not Found")
-        void getArticle() throws Exception {
+        void notFound() throws Exception {
             given(getArticleUseCase.getArticleById(any()))
                 .willThrow(new ResourceNotFoundException("article not exists"));
 
@@ -96,7 +95,7 @@ class CH03Clip01ArticleControllerUnitTest {
     class PostArticle {
         @Test
         @DisplayName("생성된 articleId 반환")
-        void returnArticleId() throws Exception {
+        void create_returnArticleId() throws Exception {
             var createdArticle = ArticleFixtures.article();
             given(createArticleUseCase.createArticle(any()))
                 .willReturn(createdArticle);

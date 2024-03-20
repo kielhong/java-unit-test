@@ -28,7 +28,7 @@ dependencies {
 //	testImplementation("org.junit.jupiter:junit-jupiter")			// Junit Jupiter
 //	testImplementation("org.junit.jupiter:junit-jupiter-params")	// Junit Jupiter extension for parameterized tests
 //	testImplementation("org.mockito:mockito-core:5.7.0")			// Mockito Core
-//	testImplementation("rg.mockito:mockito-junit-jupiter:5.7.0")	// MockitoExtension
+//	testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")	// MockitoExtension
 //	testImplementation("org.assertj:assertj-core:3.11.1")			// AssertJ
 //	testImplementation("com.jayway.jsonpath:json-path:2.9.0")		// jsonpath
 	testRuntimeOnly 'com.h2database:h2'
@@ -68,6 +68,5 @@ configurations {
 
 dependencies {
 	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-test'
-	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	integrationTestRuntimeOnly 'com.h2database:h2'
 }
