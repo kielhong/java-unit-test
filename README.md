@@ -8,8 +8,8 @@
 2. 테스트
     1. 네이밍
     2. 테스트 구조
-    3. 테스트 작성에 관한 일반 가이드
-    4. 픽스쳐
+    3. 픽스쳐
+3. 개별 예제     
 ---
 
 ## 1. 패키지 구조
@@ -72,7 +72,7 @@ article
 
 테스트를 작성하는 일반적인 규칙에 대해 설명합니다.
 
-### i. 네이밍
+### 2.1. 네이밍
 
 단위 테스트 클래스는 `[SUT]Test`로 명명합니다.
 
@@ -80,12 +80,46 @@ article
 
 e.g. `ArticleServiceTest`, `ArticleControllerTest`, etc.
 
-### ii. 테스트 클래스 위치
+### 2.2. 테스트 클래스 위치
 
 단위 테스트 클래스는 main 코드에 대응되는 package에 생성한다
 e.g. `com.example.demo.article.application.service.ArticleService.java` -> `com.example.demo.article.application.service.ArticleServiceTest.java`
 
-## 3. 참고 사이트
+### 2.3 테스트 픽스쳐
+
+테스트 수행 전에 사용하는 환경 설정 혹은 데이터
+
+Java Test Fixture 설정
+```
+plugins {
+    id 'java-test-fixtures'
+}
+```
+https://github.com/kielhong/java-unit-test/tree/main/src/testFixtures
+
+## 3. 개별 예제
+### Junit + Mockito로 서비스 객체 테스트
+- [Junit 예시](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/domain/Ch02Clip01JunitTest.java)
+- [AssertJ 예시](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/domain/Ch02Clip01JunitAssertJTest.java)
+- [Junit + Mockito 테스트 기본](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/application/service/Ch02Clip02JunitMockitoTest.java)
+- [Exception Assert](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/application/service/Ch02Clip03ExceptionTest.java)
+- [Paramterized Test](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/application/service/Ch02Clip04ParameterizedTest.java)
+- [Nested Test](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/application/service/Ch02Clip05NestedTest.java)
+
+### 컨트롤러 테스트
+- [순수한 단위 테스트 형태의 컨트롤러 테스트](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/in/api/CH03Clip01ArticleControllerUnitTest.java)
+- [@WebMvcTest를 이용한 컨트롤러 테스트](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/in/api/CH03Clip02WebMvcTest.java)
+- [jsonPath 를 이용한 response 검증](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/in/api/CH03Clip03JsonPathAssertTest.java)
+
+### Repository 테스트
+- [@DataJpaTest를 이용한 Repository 테스트] (https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/out/persistence/repository/Ch4Clip01ArticleRepositoryTest.java)
+- [Sql로 테스트 데이터 생성한 테스트](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/out/persistence/repository/Ch4Clip02ArticleRepositoryFixtureTest.java)
+
+### 통합 테스트
+- [@SpringBootTest를 이용한 통합 테스트](https://github.com/kielhong/java-unit-test/blob/main/src/integrationTest/java/com/example/demo/article/in/api/ArticleControllerIntTest.java)
+
+
+## 참고 사이트
 - Junit5: https://junit.org/junit5/
 - Assertj : https://assertj.github.io/doc/
 - Mockito : https://github.com/mockito/mockito
