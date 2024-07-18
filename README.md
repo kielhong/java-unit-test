@@ -83,6 +83,7 @@ e.g. `ArticleServiceTest`, `ArticleControllerTest`, etc.
 ### 2.2. 테스트 클래스 위치
 
 단위 테스트 클래스는 main 코드에 대응되는 package에 생성한다
+
 e.g. `com.example.demo.article.application.service.ArticleService.java` -> `com.example.demo.article.application.service.ArticleServiceTest.java`
 
 ### 2.3 테스트 픽스쳐
