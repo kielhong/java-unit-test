@@ -112,7 +112,7 @@ https://github.com/kielhong/java-unit-test/tree/main/src/testFixtures
 - [jsonPath 를 이용한 response 검증](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/in/api/CH03Clip03JsonPathAssertTest.java)
 
 ### Repository 테스트
-- [@DataJpaTest를 이용한 Repository 테스트] (https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/out/persistence/repository/Ch4Clip01ArticleRepositoryTest.java)
+- [@DataJpaTest를 이용한 Repository 테스트](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/out/persistence/repository/Ch4Clip01ArticleRepositoryTest.java)
 - [Sql로 테스트 데이터 생성한 테스트](https://github.com/kielhong/java-unit-test/blob/main/src/test/java/com/example/demo/article/adapter/out/persistence/repository/Ch4Clip02ArticleRepositoryFixtureTest.java)
 
 ### 통합 테스트
